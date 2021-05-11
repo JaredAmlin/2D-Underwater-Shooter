@@ -29,12 +29,10 @@ public class Enemy : MonoBehaviour
     {
         transform.Translate(Vector3.left * _speed * Time.deltaTime);
 
-        EnemyRespawnPosition();
-
         EnemyBoundaries();
     }
 
-    void EnemyRespawnPosition()
+    void EnemyBoundaries()
     {
         if (transform.position.x <= -12f)
         {
@@ -42,16 +40,13 @@ public class Enemy : MonoBehaviour
             Vector3 _enemyRespawnPosition = new Vector3(11.5f, _randomY, 0);
             transform.position = _enemyRespawnPosition;
         }
-    }
 
-    void EnemyBoundaries()
-    {
         if (transform.position.y <= -6.5f)
         {
             Destroy(this.gameObject);
         }
 
-        if (transform.position.x <= -11.5f && (_enemyRB.useGravity = true))
+        if (transform.position.x <= -11.5f && _enemyRB.useGravity == true)
         {
             Destroy(this.gameObject);
         }
@@ -59,7 +54,7 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Collided with " + other.transform.name);
+        Debug.Log("Collided with " + other.transform.name + " at the location of " + other.transform.position);
         
         if (other.tag == "Player")
         {
