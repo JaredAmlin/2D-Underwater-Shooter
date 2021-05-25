@@ -9,14 +9,16 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float _bottomRespawnRange = -5.1f;
     [SerializeField] private float _topRespawnRange = 5.1f;
 
-    private Rigidbody _enemyRB;
-    private BoxCollider _enemyCollider;
+    private Rigidbody2D _enemyRB;
+    private PolygonCollider2D _enemyCollider;
+    private SpriteRenderer _spriteRenderer;
 
     // Start is called before the first frame update
     void Start()
     {
-        _enemyRB = GetComponent<Rigidbody>();
-        _enemyCollider = GetComponent<BoxCollider>();
+        _enemyRB = GetComponent<Rigidbody2D>();
+        _enemyCollider = GetComponent<PolygonCollider2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -46,15 +48,15 @@ public class Enemy : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        if (transform.position.x <= -11.5f && _enemyRB.useGravity == true)
+        if (transform.position.x <= -11.5f && _enemyRB.gravityScale == 1)
         {
             Destroy(this.gameObject);
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Collided with " + other.transform.name + " at the location of " + other.transform.position);
+        Debug.Log("Enemy collided with " + other.transform.name + " at the location of " + other.transform.position);
         
         if (other.tag == "Player")
         {
@@ -65,15 +67,18 @@ public class Enemy : MonoBehaviour
                 player.Damage();
             }
 
-            Destroy(this.gameObject);
+            _enemyCollider.enabled = false;
+            _spriteRenderer.color = Color.blue;
+            _enemyRB.gravityScale = 1f;
         }
 
-        if (other.tag == "Bullet")
+        if (other.tag == "Tusk")
         {
             Destroy(other.gameObject);
 
             _enemyCollider.enabled = false;
-            _enemyRB.useGravity = true;
+            _spriteRenderer.color = Color.blue;
+            _enemyRB.gravityScale = 1f;
         }
     }
 }

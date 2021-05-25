@@ -4,31 +4,47 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    [SerializeField] private GameObject _enemyPreFab;
+    [SerializeField] private GameObject _piranhaPrefab;
     [SerializeField] private GameObject _enemyContainer;
 
+    [SerializeField] private GameObject[] powerups;
+
     private bool _stopSpawning = false;
+
+    [SerializeField] private float _enemySpawnRate = 1f;
+    private float _powerupSpawnRate;
+    [SerializeField] private float _powerupSpawnRateMin = 7f;
+    [SerializeField] private float _powerupSpawnRateMax = 12f;
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnRoutine());
+        _powerupSpawnRate = Random.Range(_powerupSpawnRateMin, _powerupSpawnRateMax);
+
+        StartCoroutine(SpawnEnemyRoutine());
+
+        StartCoroutine(SpawnPowerupRoutine());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    IEnumerator SpawnRoutine()
+    IEnumerator SpawnEnemyRoutine()
     {
         while (_stopSpawning == false)
         {
-            Vector3 _spawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
-            GameObject newEnemy = Instantiate(_enemyPreFab, _spawnPosition, Quaternion.identity);
+            Vector3 _enemySpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
+            GameObject newEnemy = Instantiate(_piranhaPrefab, _enemySpawnPosition, Quaternion.identity);
             newEnemy.transform.parent = _enemyContainer.transform;
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(_enemySpawnRate);
+        }
+    }
+
+    IEnumerator SpawnPowerupRoutine()
+    {
+        while (_stopSpawning == false)
+        {
+            Vector3 _powerupSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
+            int _randomPowerup = Random.Range(0, 3);
+            Instantiate(powerups[_randomPowerup], _powerupSpawnPosition, Quaternion.identity);
+            yield return new WaitForSeconds(_powerupSpawnRate);
         }
     }
 

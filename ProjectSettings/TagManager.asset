@@ -5,15 +5,16 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
-  - Bullet
+  - Tusk
+  - Powerup
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Background
   - Water
   - UI
-  - 
+  - Foreground
   - 
   - 
   - 
