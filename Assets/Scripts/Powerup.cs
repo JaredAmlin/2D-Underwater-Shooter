@@ -6,8 +6,20 @@ public class Powerup : MonoBehaviour
 {
     [SerializeField] private float _speed = 3f;
 
+    private Player _player;
+
     //ID for Powerups
     [SerializeField] private int _powerupID; //0 = Triple Tusk, 1 = Flipper Boost, 2 = Armor
+
+    // Start is called before the first frame update
+    private void Start()
+    {
+        _player = GameObject.Find("Player").GetComponent<Player>();
+        if (_player == null)
+        {
+            Debug.Log("The Player is NULL");
+        }
+    }
 
     // Update is called once per frame
     void Update()
@@ -34,20 +46,18 @@ public class Powerup : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            Player player = other.transform.GetComponent<Player>();
-
-            if (player != null)
+            if (_player != null)
             {
                 switch (_powerupID)
                 {
                     case 0:
-                        player.TripleTuskActive();
+                        _player.TripleTuskActive();
                         break;
                     case 1:
-                        player.FlipperBoostActive();
+                        _player.FlipperBoostActive();
                         break;
                     case 2:
-                        player.ShieldActive();
+                        _player.ShieldActive();
                         break;
                     default:
                         Debug.LogError ("There is no powerup assigned for this case");

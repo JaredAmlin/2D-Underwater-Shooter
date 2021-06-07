@@ -13,12 +13,30 @@ public class Enemy : MonoBehaviour
     private PolygonCollider2D _enemyCollider;
     private SpriteRenderer _spriteRenderer;
 
+    private UIManager _uiManager;
+
+    private Player _player;
+
     // Start is called before the first frame update
     void Start()
     {
         _enemyRB = GetComponent<Rigidbody2D>();
         _enemyCollider = GetComponent<PolygonCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+
+        _player = GameObject.Find("Player").GetComponent<Player>();
+
+        if (_player == null)
+        {
+            Debug.Log("The Player is NULL");
+        }
+
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+
+        if (_uiManager == null)
+        {
+            Debug.LogError("The UI Manager is NULL");
+        }
     }
 
     // Update is called once per frame
@@ -60,15 +78,14 @@ public class Enemy : MonoBehaviour
         
         if (other.tag == "Player")
         {
-            Player player = other.transform.GetComponent<Player>();
-            
-            if (player != null)
+            if (_player != null)
             {
-                player.Damage();
+                _player.Damage();
             }
 
             _enemyCollider.enabled = false;
             _spriteRenderer.color = Color.blue;
+            _spriteRenderer.flipY = true;
             _enemyRB.gravityScale = 1f;
         }
 
@@ -76,8 +93,16 @@ public class Enemy : MonoBehaviour
         {
             Destroy(other.gameObject);
 
+            //communicate with UI Manager
+            //add 10 points to score
+            if (_uiManager != null)
+            {
+                _uiManager.UpdateScore(10);
+            }
+
             _enemyCollider.enabled = false;
             _spriteRenderer.color = Color.blue;
+            _spriteRenderer.flipY = true;
             _enemyRB.gravityScale = 1f;
         }
     }

@@ -26,9 +26,14 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject _tuskPrefab;
     [SerializeField] private GameObject _tripleTuskPrefab;
-    [SerializeField] private GameObject _shieldDummy;
+    [SerializeField] private GameObject _bubbleShield;
 
+    private PolygonCollider2D _playerCollider;
     private SpawnManager _spawnManager;
+    private UIManager _uiManager;
+
+    private Animator _animator;
+    private SpriteRenderer _spriteRenderer;
   
     // Start is called before the first frame update
     void Start()
@@ -38,6 +43,34 @@ public class Player : MonoBehaviour
         if (_spawnManager == null)
         {
             Debug.LogError("The Spawn Manager is NULL");
+        }
+
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+
+        if (_uiManager == null)
+        {
+            Debug.LogError("The UI Manager is NULL");
+        }
+
+        _animator = GetComponent<Animator>();
+
+        if (_animator == null)
+        {
+            Debug.LogError("The Animator is NULL");
+        }
+
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (_spriteRenderer == null)
+        {
+            Debug.LogError("The Sprite Renderer is NULL");
+        }
+
+        _playerCollider = GetComponent<PolygonCollider2D>();
+
+        if (_playerCollider == null)
+        {
+            Debug.LogError("The Player Collider is NULL");
         }
 
         transform.position = new Vector3(_startPosX, 0, 0);
@@ -64,7 +97,7 @@ public class Player : MonoBehaviour
         PlayerBoundaries();
 
         FlipperBoost();
-         
+
         Vector3 _direction = new Vector3(_horizontalInput, _verticalInput, 0).normalized;
         transform.Translate(_direction * _speed * Time.deltaTime);
     }
@@ -111,7 +144,7 @@ public class Player : MonoBehaviour
         if (_isShieldActive == true)
         {
             _isShieldActive = false;
-            _shieldDummy.SetActive(false);
+            _bubbleShield.SetActive(false);
             return;
         }
 
@@ -120,11 +153,21 @@ public class Player : MonoBehaviour
             _lives--;
             //_lives = _lives -1;
             //_lives -= 1;
+
+            _uiManager.UpdateLives(_lives);
+
+            //trigger color change to red for short time
+            //_spriteRenderer.color = Color.red;
+            PlayerHurtAnimation();
+
+            //trigger Player Damage animation
+            _animator.SetTrigger("PlayerHurt");
         }
 
         if (_lives < 1)
         {
             _spawnManager.OnPlayerDeath();
+            _uiManager.GameOverText();
             Destroy(this.gameObject);
         }
     }
@@ -160,6 +203,46 @@ public class Player : MonoBehaviour
      public void ShieldActive()
     {
         _isShieldActive = true;
-        _shieldDummy.SetActive(true);
+        _bubbleShield.SetActive(true);
     }
+
+    void PlayerHurtAnimation()
+    {
+        StartCoroutine(PlayerHurtAnimationPowerDownRoutine());
+    }
+
+    IEnumerator PlayerHurtAnimationPowerDownRoutine()
+    {
+        _playerCollider.enabled = false;
+        
+        //_spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(0.3f);
+        //_spriteRenderer.color = Color.white;
+
+        _spriteRenderer.color = Color.clear;
+
+        yield return new WaitForSeconds(0.2f);
+
+        _spriteRenderer.color = Color.white;
+
+        yield return new WaitForSeconds(0.2f);
+
+        _spriteRenderer.color = Color.clear;
+
+        yield return new WaitForSeconds(0.2f);
+
+        _spriteRenderer.color = Color.white;
+
+        yield return new WaitForSeconds(0.2f);
+
+        _spriteRenderer.color = Color.clear;
+
+        yield return new WaitForSeconds(0.2f);
+
+        _spriteRenderer.color = Color.white;
+
+        _playerCollider.enabled = true;
+    }
+
+    
 }
