@@ -34,6 +34,9 @@ public class Player : MonoBehaviour
 
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
+    [SerializeField] private AudioClip _pewPewSoundClip;
+    [SerializeField] private AudioClip _bubblePopSoundClip;
+    private AudioSource _audioSource;
   
     // Start is called before the first frame update
     void Start()
@@ -71,6 +74,13 @@ public class Player : MonoBehaviour
         if (_playerCollider == null)
         {
             Debug.LogError("The Player Collider is NULL");
+        }
+
+        _audioSource = GetComponent<AudioSource>();
+
+        if (_audioSource == null)
+        {
+            Debug.LogError("The Audio Source on the Player is NULL");
         }
 
         transform.position = new Vector3(_startPosX, 0, 0);
@@ -124,6 +134,9 @@ public class Player : MonoBehaviour
         {
             Instantiate(_tuskPrefab, transform.position + _firePoint, Quaternion.identity);
         }
+
+        //play fire sound
+        _audioSource.PlayOneShot(_pewPewSoundClip);
     }
 
     void FlipperBoost()
@@ -145,6 +158,7 @@ public class Player : MonoBehaviour
         {
             _isShieldActive = false;
             _bubbleShield.SetActive(false);
+            _audioSource.PlayOneShot(_bubblePopSoundClip);
             return;
         }
 

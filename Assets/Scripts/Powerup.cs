@@ -8,6 +8,8 @@ public class Powerup : MonoBehaviour
 
     private Player _player;
 
+    [SerializeField] private AudioClip _powerupSoundClip;
+
     //ID for Powerups
     [SerializeField] private int _powerupID; //0 = Triple Tusk, 1 = Flipper Boost, 2 = Armor
 
@@ -46,6 +48,8 @@ public class Powerup : MonoBehaviour
     {
         if (other.tag == "Player")
         {
+            AudioSource.PlayClipAtPoint(_powerupSoundClip, new Vector3 (0, 0, -10));
+
             if (_player != null)
             {
                 switch (_powerupID)

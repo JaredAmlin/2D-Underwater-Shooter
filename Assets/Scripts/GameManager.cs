@@ -7,24 +7,32 @@ public class GameManager : MonoBehaviour
 {
     private bool _isGameOver = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
-        //if R key is pressed, load current scene
+        ReloadGameScene();
+
+        QuitGame();
+    }
+
+    public void GameOver()
+    {
+        _isGameOver = true;
+    }
+
+    void ReloadGameScene()
+    {
         if (Input.GetKeyDown(KeyCode.R) && _isGameOver == true)
         {
             SceneManager.LoadScene(1);
         }
     }
 
-    public void GameOver()
+    void QuitGame()
     {
-        _isGameOver = true;
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 }
