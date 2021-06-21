@@ -28,6 +28,9 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _tripleTuskPrefab;
     [SerializeField] private GameObject _bubbleShield;
 
+    //variable to hold my CameraShake class
+    private CameraShake _cameraHolder;
+
     private PolygonCollider2D _playerCollider;
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
@@ -86,6 +89,15 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(_startPosX, 0, 0);
 
         _speed = _defaultSpeed;
+
+        //find the camera holder and get the CameraShake class component
+        _cameraHolder = GameObject.Find("Camera_Holder").GetComponent<CameraShake>();
+
+        //debug the GetComponent
+        if (_cameraHolder == null)
+        {
+            Debug.LogError("The Camera Holder is NULL");
+        }
     }
 
     // Update is called once per frame
@@ -164,14 +176,15 @@ public class Player : MonoBehaviour
 
         else
         {
+            //start coroutine on the camera shake script.
+            StartCoroutine(_cameraHolder.ShakeTheCamera(0.5f, 0.5f));
+
             _lives--;
             //_lives = _lives -1;
             //_lives -= 1;
 
             _uiManager.UpdateLives(_lives);
 
-            //trigger color change to red for short time
-            //_spriteRenderer.color = Color.red;
             PlayerHurtAnimation();
 
             //trigger Player Damage animation
@@ -229,9 +242,7 @@ public class Player : MonoBehaviour
     {
         _playerCollider.enabled = false;
         
-        //_spriteRenderer.color = Color.red;
         yield return new WaitForSeconds(0.3f);
-        //_spriteRenderer.color = Color.white;
 
         _spriteRenderer.color = Color.clear;
 
@@ -257,6 +268,4 @@ public class Player : MonoBehaviour
 
         _playerCollider.enabled = true;
     }
-
-    
 }
