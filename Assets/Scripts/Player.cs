@@ -18,7 +18,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float _tuskFireRate = 0.5f;
     private float _canFireTusk = 0f;
 
-    [SerializeField] private int _lives = 3;
+    [SerializeField] private int _currentLives;
+    [SerializeField] private int _maxLives = 3;
+    private int _minLives = 0;
 
     private bool _isTripleTuskActive = false;
     private bool _isFlipperBoostActive = false;
@@ -27,6 +29,10 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _tuskPrefab;
     [SerializeField] private GameObject _tripleTuskPrefab;
     [SerializeField] private GameObject _bubbleShield;
+
+    //game object variables for player damage visualization
+    [SerializeField] private GameObject _damageScarSingle;
+    [SerializeField] private GameObject _damageScarDouble;
 
     //variable to hold my CameraShake class
     private CameraShake _cameraHolder;
@@ -89,6 +95,9 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(_startPosX, 0, 0);
 
         _speed = _defaultSpeed;
+
+        //set the lives to be the maximum value
+        _currentLives = _maxLives;
 
         //find the camera holder and get the CameraShake class component
         _cameraHolder = GameObject.Find("Camera_Holder").GetComponent<CameraShake>();
@@ -179,11 +188,17 @@ public class Player : MonoBehaviour
             //start coroutine on the camera shake script.
             StartCoroutine(_cameraHolder.ShakeTheCamera(0.5f, 0.5f));
 
-            _lives--;
+            _currentLives--;
             //_lives = _lives -1;
             //_lives -= 1;
 
-            _uiManager.UpdateLives(_lives);
+            //safeguard to keep lives from going below zero
+            int _currentLivesDamageClamp = Mathf.Clamp(_currentLives, _minLives, _maxLives);
+
+            //assign the current life to the clamped value
+            _currentLives = _currentLivesDamageClamp;
+
+            _uiManager.UpdateLives(_currentLives);
 
             PlayerHurtAnimation();
 
@@ -191,11 +206,54 @@ public class Player : MonoBehaviour
             _animator.SetTrigger("PlayerHurt");
         }
 
-        if (_lives < 1)
+        //check if current lives is les than max, if so display damage scar
+        if (_currentLives < _maxLives)
+        {
+            _damageScarSingle.SetActive(true);
+        }
+
+        //if current lives is less than 2 activate the second damage scar
+        if (_currentLives < 2)
+        {
+            _damageScarDouble.SetActive(true);
+        }
+
+        //if lives is less than one, destroy the player
+        if (_currentLives < 1)
         {
             _spawnManager.OnPlayerDeath();
             _uiManager.GameOverText();
             Destroy(this.gameObject);
+        }
+    }
+
+    public void Heal()
+    {
+        //send a message to the console to let me know I got this far
+        Debug.Log("the health powerup hit the player");
+        
+        //take the current value of lives and add one
+        _currentLives++;
+
+        //use Mathf to clamp the lives value between 0 and 3
+        int _currentLivesHealClamp = Mathf.Clamp(_currentLives, _minLives, _maxLives);
+
+        //assign current life to be the clamped value
+        _currentLives = _currentLivesHealClamp;
+
+        //tell the uiManager to update the lives sprites
+        _uiManager.UpdateLives(_currentLives);
+
+        //deactivate the second scar if the player has two or more lives
+        if (_currentLives > 1)
+        {
+            _damageScarDouble.SetActive(false);
+        }
+
+        //deactivate the first scar if player has full life
+        if (_currentLives == _maxLives)
+        {
+            _damageScarSingle.SetActive(false);
         }
     }
 
@@ -241,31 +299,85 @@ public class Player : MonoBehaviour
     IEnumerator PlayerHurtAnimationPowerDownRoutine()
     {
         _playerCollider.enabled = false;
-        
-        yield return new WaitForSeconds(0.3f);
-
-        _spriteRenderer.color = Color.clear;
-
-        yield return new WaitForSeconds(0.2f);
-
-        _spriteRenderer.color = Color.white;
 
         yield return new WaitForSeconds(0.2f);
 
         _spriteRenderer.color = Color.clear;
 
+        /*set both damage scars to inactive when 
+        the sprite render is set to clear*/
+        _damageScarSingle.SetActive(false);
+        _damageScarDouble.SetActive(false);
+
         yield return new WaitForSeconds(0.2f);
 
         _spriteRenderer.color = Color.white;
+
+        /*check current lives to set 
+        damage scars active if needed*/
+        if (_currentLives < _maxLives)
+        {
+            _damageScarSingle.SetActive(true);
+        }
+
+        if (_currentLives < 2)
+        {
+            _damageScarDouble.SetActive(true);
+        }
 
         yield return new WaitForSeconds(0.2f);
 
         _spriteRenderer.color = Color.clear;
 
+        /*set both damage scars to inactive when 
+        the sprite render is set to clear*/
+        _damageScarSingle.SetActive(false);
+        _damageScarDouble.SetActive(false);
+
         yield return new WaitForSeconds(0.2f);
 
         _spriteRenderer.color = Color.white;
 
-        _playerCollider.enabled = true;
+        /*check current lives to set 
+        damage scars active if needed*/
+        if (_currentLives < _maxLives)
+        {
+            _damageScarSingle.SetActive(true);
+        }
+
+        if (_currentLives < 2)
+        {
+            _damageScarDouble.SetActive(true);
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
+        _spriteRenderer.color = Color.clear;
+
+        /*set both damage scars to inactive when 
+        the sprite render is set to clear*/
+        _damageScarSingle.SetActive(false);
+        _damageScarDouble.SetActive(false);
+
+        yield return new WaitForSeconds(0.2f);
+
+        _spriteRenderer.color = Color.white;
+
+        /*check current lives to set 
+        damage scars active if needed*/
+        if (_currentLives < _maxLives)
+        {
+            _damageScarSingle.SetActive(true);
+        }
+
+        if (_currentLives < 2)
+        {
+            _damageScarDouble.SetActive(true);
+        }
+
+        if (_playerCollider != null)
+        {
+            _playerCollider.enabled = true;
+        }
     }
 }

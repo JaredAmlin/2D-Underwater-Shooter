@@ -11,7 +11,7 @@ public class Powerup : MonoBehaviour
     [SerializeField] private AudioClip _powerupSoundClip;
 
     //ID for Powerups
-    [SerializeField] private int _powerupID; //0 = Triple Tusk, 1 = Flipper Boost, 2 = Armor
+    [SerializeField] private int _powerupID; //0 = Triple Tusk, 1 = Flipper Boost, 2 = Bubble Shield, 3 = Health 
 
     // Start is called before the first frame update
     private void Start()
@@ -62,6 +62,9 @@ public class Powerup : MonoBehaviour
                         break;
                     case 2:
                         _player.ShieldActive();
+                        break;
+                    case 3: //new case to hold my health collectible powerup
+                        _player.Heal(); //need to make a healing method on my player script
                         break;
                     default:
                         Debug.LogError ("There is no powerup assigned for this case");
