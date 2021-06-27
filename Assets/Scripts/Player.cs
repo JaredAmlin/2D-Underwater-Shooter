@@ -4,9 +4,20 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private float _speed;
-    [SerializeField] private float _defaultSpeed = 4f;
+    //variable to store the current speed of the player
+    [SerializeField] private float _currentSpeed;
+    //variable to store the default speed, which will be minimum
+    [SerializeField] private float _defaultSpeed;
+    //variable to use for clamping min speed value
+    [SerializeField] private float _minSpeed = 4f;
+    //variable to use for clamping max speed value
+    [SerializeField] private float _maxSpeed = 10f;
+    //variable to store flipper boost powerup speed
     [SerializeField] private float _flipperBoostSpeed = 7f;
+    //variable for player to accelerate
+    [SerializeField] private float _accelFactor = 0.1f;
+    //variable for player to decelerate
+    [SerializeField] private float _decelFactor = 0.2f;
 
     [SerializeField] private float _startPosX = -6f;
 
@@ -94,7 +105,10 @@ public class Player : MonoBehaviour
 
         transform.position = new Vector3(_startPosX, 0, 0);
 
-        _speed = _defaultSpeed;
+        //set both current and default speeds to be the minimum value
+        _currentSpeed = _minSpeed;
+
+        _defaultSpeed = _minSpeed;
 
         //set the lives to be the maximum value
         _currentLives = _maxLives;
@@ -127,10 +141,10 @@ public class Player : MonoBehaviour
 
         PlayerBoundaries();
 
-        FlipperBoost();
+        FlipperThrusters();
 
         Vector3 _direction = new Vector3(_horizontalInput, _verticalInput, 0).normalized;
-        transform.Translate(_direction * _speed * Time.deltaTime);
+        transform.Translate(_direction * _currentSpeed * Time.deltaTime);
     }
 
     void PlayerBoundaries()
@@ -160,16 +174,46 @@ public class Player : MonoBehaviour
         _audioSource.PlayOneShot(_pewPewSoundClip);
     }
 
-    void FlipperBoost()
+    void FlipperThrusters()
     {
-        if (_isFlipperBoostActive == false)
+        //check if the speed boost powerup is active when setting speed on shift release
+        //check flipper boost powerup to set minSpeed value
+        if (_isFlipperBoostActive == true)
         {
-            _speed = _defaultSpeed;
+            //make sure flipper boost still works if true
+            _minSpeed = _flipperBoostSpeed;
         }
 
-        else
+        else if (_isFlipperBoostActive == false)
         {
-            _speed = _flipperBoostSpeed;
+            //reset minValue to default after being reassigned above
+            _minSpeed = _defaultSpeed;
+        }
+
+        //clamp the speed to have max and mix values
+        float _speedClamp = Mathf.Clamp(_currentSpeed, _minSpeed, _maxSpeed);
+        //move the player at an increased rate while the shift key is pressed
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            //increase the speed of the player
+            //assign the current speed value to be the clamped speed
+            //add acceleration factor to clamped speed value as long as shift is held
+            _currentSpeed = _speedClamp += _accelFactor;
+        }
+
+        //reset player speed to normal when shift is released
+        //decelerate the player speed if current speed is greater than minimum speed
+        else if (_currentSpeed > _minSpeed)
+        {
+            //assign current speed to speed clamp and subtract deceleration factor
+            _currentSpeed = _speedClamp -= _decelFactor;
+        }
+
+        //reset the min speed value to stop the decelerator
+        else if (_currentSpeed <= _minSpeed)
+        {
+            //assign the current speed to be the minimum value
+            _currentSpeed = _minSpeed;
         }
     }
 
@@ -273,6 +317,7 @@ public class Player : MonoBehaviour
 
     public void FlipperBoostActive()
     {
+        _currentSpeed = _flipperBoostSpeed;
         StartCoroutine(FlipperBoostPowerDownRoutine());
     }
 
@@ -283,6 +328,8 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(5f);
 
         _isFlipperBoostActive = false;
+
+        _currentSpeed = _defaultSpeed;
     }
 
      public void ShieldActive()

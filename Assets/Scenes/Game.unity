@@ -848,8 +848,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d75a273b0cf1a88428a3648a38239b16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _defaultSpeed: 4
+  _currentSpeed: 0
+  _minSpeed: 4
+  _maxSpeed: 10
   _flipperBoostSpeed: 7
+  _accelFactor: 0.2
+  _decelFactor: 0.1
   _startPosX: -6
   _rightBoundary: 9.23
   _leftBoundary: -9.23
@@ -1576,63 +1580,6 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
---- !u!1001 &1192542449
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 7060408807984791048, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_Name
-      value: Piranha
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_RootOrder
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.033
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
 --- !u!1 &1244114461
 GameObject:
   m_ObjectHideFlags: 0
@@ -2067,63 +2014,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1001 &2063228389
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 7060408807984791048, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_Name
-      value: Piranha (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_RootOrder
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 5.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7060408807984791091, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
 --- !u!1 &2076448644
 GameObject:
   m_ObjectHideFlags: 0
