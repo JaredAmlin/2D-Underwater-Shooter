@@ -32,6 +32,13 @@ public class Player : MonoBehaviour
     [SerializeField] private int _currentLives;
     [SerializeField] private int _maxLives = 3;
     private int _minLives = 0;
+    //variable to hold my shield health
+    [SerializeField] private int _shieldHealth;
+    //variable to hold max value of shield health
+    private int _maxShieldHealth = 3;
+    //variable to hold min value of shield health 
+    private int _minShieldHealth = 0;
+
 
     private bool _isTripleTuskActive = false;
     private bool _isFlipperBoostActive = false;
@@ -54,9 +61,14 @@ public class Player : MonoBehaviour
 
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
+    //variable for my shield sprite renderer
+    private SpriteRenderer _shieldSpriteRenderer;
     [SerializeField] private AudioClip _pewPewSoundClip;
     [SerializeField] private AudioClip _bubblePopSoundClip;
     private AudioSource _audioSource;
+
+    [SerializeField] private Color _shieldDamageColor1;
+    [SerializeField] private Color _shieldDamageColor2;
   
     // Start is called before the first frame update
     void Start()
@@ -107,8 +119,10 @@ public class Player : MonoBehaviour
 
         //set both current and default speeds to be the minimum value
         _currentSpeed = _minSpeed;
-
         _defaultSpeed = _minSpeed;
+
+        //set shield health to be max value
+        _shieldHealth = _maxShieldHealth;
 
         //set the lives to be the maximum value
         _currentLives = _maxLives;
@@ -121,6 +135,14 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("The Camera Holder is NULL");
         }
+
+        //get component and null check sprite render on the shield
+        _shieldSpriteRenderer = _bubbleShield.GetComponent<SpriteRenderer>();
+        if  (_shieldSpriteRenderer == null)
+        {
+            Debug.LogError("The Sprite Renderer on the Player Shield is NULL");
+        }
+
     }
 
     // Update is called once per frame
@@ -221,9 +243,36 @@ public class Player : MonoBehaviour
     {
         if (_isShieldActive == true)
         {
-            _isShieldActive = false;
-            _bubbleShield.SetActive(false);
-            _audioSource.PlayOneShot(_bubblePopSoundClip);
+            //subtract one from the shield health
+            _shieldHealth--;
+
+            //clamp the min value to prevent null reference error
+            int _shieldHealthClamp = Mathf.Clamp(_shieldHealth, _minShieldHealth, _maxShieldHealth);
+
+            //assign shield health to be the clamped value
+            _shieldHealth = _shieldHealthClamp;
+
+            if (_shieldHealth == 2)
+            {
+                //change color of the shield via sprite renderer
+                _shieldSpriteRenderer.color = _shieldDamageColor1;
+            }
+
+            else if (_shieldHealth == 1)
+            {
+                //change color again
+                _shieldSpriteRenderer.color = _shieldDamageColor2;
+            }
+
+            //put shield death commands in if statement for zero shield health
+            if (_shieldHealth <= _minShieldHealth)
+            {
+                _isShieldActive = false;
+                _bubbleShield.SetActive(false);
+                _audioSource.PlayOneShot(_bubblePopSoundClip);
+                _shieldSpriteRenderer.color = Color.white;
+            }
+            
             return;
         }
 
