@@ -22,7 +22,21 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image _livesImage;
     [SerializeField] private Sprite[] _livesSprites;
 
+    //variable to store my thruster UI fill Image
+    [SerializeField] private Image _thrusterFillImage;
+
+    //var to store default sprite color
+    private Color _maxThrusterColor = Color.white;
+    //var to store and select min thruster color
+    [SerializeField] private Color _minThrusterColor;
+    //var to store transparent color of min thruster color
+    [SerializeField] private Color _minThrusterTransparentColor;
+
+    private bool _isThrusterCoolDownActive = false;
+
     private GameManager _gameManager;
+
+    private int _maxPlayerThrust = 100;
 
     // Start is called before the first frame update
     void Start()
@@ -54,6 +68,61 @@ public class UIManager : MonoBehaviour
     public void UpdateLives(int currentLives)
     {
         _livesImage.sprite = _livesSprites[currentLives];
+    }
+
+    //public method to call to send current thrust value to the UI
+    public void UpdateThruster(float _currentThrust)
+    {
+        //set the fill of the UI image to refelct the value of the thrusters being used. 
+        _thrusterFillImage.fillAmount = _currentThrust / _maxPlayerThrust;
+
+        //only use color lerp if thruster cool down is not active
+        if (_isThrusterCoolDownActive == false)
+        {
+            //local float variable to hold fill amount on fill image 
+            float _thrusterFillAmount = _thrusterFillImage.fillAmount;
+            //use lerp for color fade on thruster use
+            _thrusterFillImage.color = Color.Lerp(_minThrusterColor, _maxThrusterColor, _thrusterFillAmount);
+        }
+    }
+
+    /*public method for player to pass duration of thruster 
+     * penalty time when current thrust amount is zero*/
+    //require player to pass float of duration time
+    public void ThrusterCoolDown(float duration)
+    {
+        //start the duration cool down to handle the while loop
+        StartCoroutine(ThrusterCoolDownDuration(duration));
+        //start coroutine for thruster cool down animation
+        StartCoroutine(ThrusterCoolDownRoutine());
+    }
+
+    //coroutine to pass time duration from player while thrusters are disabled
+    //pass duration from player to coroutine through cool down method
+    IEnumerator ThrusterCoolDownDuration(float duration)
+    {
+        //set bool to control while loop animation
+        _isThrusterCoolDownActive = true;
+        //use duration from player
+        yield return new WaitForSeconds(duration);
+        //set bool to stop while loop
+        _isThrusterCoolDownActive = false;
+    }
+
+    //coroutine for cool down animation 
+    IEnumerator ThrusterCoolDownRoutine()
+    {
+        //run while loop for duration of cool down
+        //flash color animation while thrusters are cooling down
+        while (_isThrusterCoolDownActive == true)
+        {
+            //set color of thruster fill UI to min color with 50% transparency
+            _thrusterFillImage.color = _minThrusterTransparentColor;
+            yield return new WaitForSeconds(0.2f);
+            //set color of thruster fill UI to min color
+            _thrusterFillImage.color = _minThrusterColor;
+            yield return new WaitForSeconds(0.2f);
+        }
     }
 
     public void GameOverText()

@@ -19,6 +19,20 @@ public class Player : MonoBehaviour
     //variable for player to decelerate
     [SerializeField] private float _decelFactor = 0.2f;
 
+    /*variable to hold the current thrust amount, 
+    * changing as shift is held or released*/
+    [SerializeField] private float _currentThrust;
+    //variable to hold max thrust value
+    [SerializeField] private float _maxThrust = 100f;
+    //variable to hold min thrust value
+    [SerializeField] private float _minThrust = 0f;
+    //factor to increase thrust amount
+    [SerializeField] private float _thrustDecelFactor = 0.2f;
+    //factor to decrease thrust amount
+    [SerializeField] private float _thrustAccelFactor = 0.1f;
+    //cool down time to deactivate thruster after hitting zero
+    [SerializeField] private float _thrusterCoolDownTime = 2f;
+
     [SerializeField] private float _startPosX = -6f;
 
     [SerializeField] private float _rightBoundary = 0f;
@@ -43,6 +57,13 @@ public class Player : MonoBehaviour
     private bool _isTripleTuskActive = false;
     private bool _isFlipperBoostActive = false;
     private bool _isShieldActive = false;
+
+    //bool to handle if my player can thrust
+    [SerializeField] private bool _canThrust = false;
+    //bool to handle if my deceleration rates should be active
+    [SerializeField] private bool _isThrusting = false;
+    //bool to set isThrusting in update one time when shift is pressed
+    [SerializeField] private bool _isThrustingSwitch = false;
 
     [SerializeField] private GameObject _tuskPrefab;
     [SerializeField] private GameObject _tripleTuskPrefab;
@@ -126,6 +147,11 @@ public class Player : MonoBehaviour
 
         //set the lives to be the maximum value
         _currentLives = _maxLives;
+
+        //set current thrust to be the max value
+        _currentThrust = _maxThrust;
+
+        _canThrust = true;
 
         //find the camera holder and get the CameraShake class component
         _cameraHolder = GameObject.Find("Camera_Holder").GetComponent<CameraShake>();
@@ -214,21 +240,59 @@ public class Player : MonoBehaviour
 
         //clamp the speed to have max and mix values
         float _speedClamp = Mathf.Clamp(_currentSpeed, _minSpeed, _maxSpeed);
+
+        //clamp the thrust value to min and max
+        float _thrustClamp = Mathf.Clamp(_currentThrust, _minThrust, _maxThrust);
+
+        //turn off ability to thrust if thrust value is minimum value
+        if (_currentThrust <= _minThrust)
+        {
+            //start coroutine for thruster cool down
+            ThrusterCoolDown();
+
+            //tell UI manager to start the cool down for thrusters
+            _uiManager.ThrusterCoolDown(_thrusterCoolDownTime);
+        }
+
         //move the player at an increased rate while the shift key is pressed
+        //decrease thruster value at an accelerated rate when shift is held down.
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            //increase the speed of the player
-            //assign the current speed value to be the clamped speed
-            //add acceleration factor to clamped speed value as long as shift is held
-            _currentSpeed = _speedClamp += _accelFactor;
+            //keep isThrusting from returning true in update for as long as shift is held. One time set to true. 
+            if (_isThrustingSwitch == false && _canThrust == true)
+            {
+                _isThrusting = true;
+                _isThrustingSwitch = true;
+            }
+
+            //if there is a thrust amount remaining, let the player speed up
+            if (_canThrust == true)
+            {
+                //increase the speed of the player
+                //assign the current speed value to be the clamped speed
+                //add acceleration factor to clamped speed value as long as shift is held
+                _currentSpeed = _speedClamp += _accelFactor * Time.deltaTime;
+
+                //decrease the thrust value of the player
+                //assign clamped value
+                //subtract deceleration factor when shift is held
+                _currentThrust = _thrustClamp -= _thrustDecelFactor * Time.deltaTime;
+            }
+        }
+
+        //when shift is released, set isThrusting to false and reset the switch 
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            _isThrusting = false;
+            _isThrustingSwitch = false;
         }
 
         //reset player speed to normal when shift is released
         //decelerate the player speed if current speed is greater than minimum speed
-        else if (_currentSpeed > _minSpeed)
+        if (_currentSpeed > _minSpeed && _isThrusting == false)
         {
             //assign current speed to speed clamp and subtract deceleration factor
-            _currentSpeed = _speedClamp -= _decelFactor;
+            _currentSpeed = _speedClamp -= _decelFactor * Time.deltaTime;
         }
 
         //reset the min speed value to stop the decelerator
@@ -237,6 +301,22 @@ public class Player : MonoBehaviour
             //assign the current speed to be the minimum value
             _currentSpeed = _minSpeed;
         }
+
+        //add value to the thrusters if the current value is less than max
+        if (_currentThrust < _maxThrust && _isThrusting == false)
+        {
+            //increase the thruster value at an accelerated rate
+            _currentThrust = _thrustClamp += _thrustAccelFactor * Time.deltaTime;
+        }
+
+        //reset the max value to stop the accellerator
+        else if (_currentThrust >= _maxThrust)
+        {
+            _currentThrust = _maxThrust;
+        }
+
+        //update the UI for thrusters available
+        _uiManager.UpdateThruster(_currentThrust);
     }
 
     public void Damage()
@@ -385,6 +465,24 @@ public class Player : MonoBehaviour
     {
         _isShieldActive = true;
         _bubbleShield.SetActive(true);
+    }
+
+    //method for thruster cool down
+    void ThrusterCoolDown()
+    {
+        StartCoroutine(ThrusterCoolDownRoutine());
+    }
+
+    /*disable thrusters if thrust level hits zero for timed duration
+    set is thrusting to false
+    reset canThrust to true after time expires*/
+    IEnumerator ThrusterCoolDownRoutine()
+    {
+        _canThrust = false;
+        _isThrusting = false;
+        _isThrustingSwitch = false;
+        yield return new WaitForSeconds(_thrusterCoolDownTime);
+        _canThrust = true;
     }
 
     void PlayerHurtAnimation()
