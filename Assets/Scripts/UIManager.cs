@@ -11,6 +11,9 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TMP_Text _scoreText;
 
+    //text variable for my ammo to update
+    [SerializeField] private TMP_Text _tuskAmmoText;
+
     [SerializeField] private TMP_Text _clockText;
 
     [SerializeField] private TMP_Text _gameText;
@@ -22,8 +25,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image _livesImage;
     [SerializeField] private Sprite[] _livesSprites;
 
-    //variable to store my thruster UI fill Image
+    //variable to store the thruster UI fill Image
     [SerializeField] private Image _thrusterFillImage;
+
+    //variable to store the ammo UI fill image
+    [SerializeField] private Image _tuskAmmoFillImage;
 
     //var to store default sprite color
     private Color _maxThrusterColor = Color.white;
@@ -37,6 +43,7 @@ public class UIManager : MonoBehaviour
     private GameManager _gameManager;
 
     private int _maxPlayerThrust = 100;
+    private int _maxPlayerTuskAmmo = 15;
 
     // Start is called before the first frame update
     void Start()
@@ -70,11 +77,24 @@ public class UIManager : MonoBehaviour
         _livesImage.sprite = _livesSprites[currentLives];
     }
 
+    //public method to update current ammo
+    //require current int ammo count from player
+    public void UpdateTuskAmmo(int currentTuskAmmo)
+    {
+        //tell ammo text to update Text: + current ammo
+        _tuskAmmoText.text = $"Tusks: {currentTuskAmmo}";
+
+        float _currentTuskAmmoFillAmount = ((float) currentTuskAmmo) / ((float) _maxPlayerTuskAmmo);
+        Debug.Log(_currentTuskAmmoFillAmount);
+
+        _tuskAmmoFillImage.fillAmount = _currentTuskAmmoFillAmount;
+    }
+
     //public method to call to send current thrust value to the UI
-    public void UpdateThruster(float _currentThrust)
+    public void UpdateThruster(float currentThrust)
     {
         //set the fill of the UI image to refelct the value of the thrusters being used. 
-        _thrusterFillImage.fillAmount = _currentThrust / _maxPlayerThrust;
+        _thrusterFillImage.fillAmount = currentThrust / _maxPlayerThrust;
 
         //only use color lerp if thruster cool down is not active
         if (_isThrusterCoolDownActive == false)

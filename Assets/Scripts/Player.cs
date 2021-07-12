@@ -43,6 +43,13 @@ public class Player : MonoBehaviour
     [SerializeField] private float _tuskFireRate = 0.5f;
     private float _canFireTusk = 0f;
 
+    //variable for current ammo count
+    [SerializeField] private int _currentTuskAmmo;
+    //variable for max ammo count
+    [SerializeField] private int _maxTuskAmmo = 15;
+    //variable for min ammo count
+    private int _minTuskAmmo = 0;
+
     [SerializeField] private int _currentLives;
     [SerializeField] private int _maxLives = 3;
     private int _minLives = 0;
@@ -151,7 +158,14 @@ public class Player : MonoBehaviour
         //set current thrust to be the max value
         _currentThrust = _maxThrust;
 
+        //thruster is full so player canThrust
         _canThrust = true;
+
+        //assign ammo count to max value
+        _currentTuskAmmo = _maxTuskAmmo;
+
+        //update UI manager to show full ammo count when game starts
+        _uiManager.UpdateTuskAmmo(_currentTuskAmmo);
 
         //find the camera holder and get the CameraShake class component
         _cameraHolder = GameObject.Find("Camera_Holder").GetComponent<CameraShake>();
@@ -208,18 +222,43 @@ public class Player : MonoBehaviour
         _canFireTusk = Time.time + _tuskFireRate;
         Vector3 _firePoint = new Vector3(2f, 0.2f, 0);
 
-        if (_isTripleTuskActive == true)
+        //add condition to fire if ammo count is greater than zero
+        if (_isTripleTuskActive == true && _currentTuskAmmo > _minTuskAmmo)
         {
             Instantiate(_tripleTuskPrefab, transform.position + _firePoint, Quaternion.identity);
+
+            //play fire sound if ammo available
+            _audioSource.PlayOneShot(_pewPewSoundClip);
         }
 
-        else
+        //add condition if ammo count is greater than zero
+        else if (_currentTuskAmmo > _minTuskAmmo)
         {
             Instantiate(_tuskPrefab, transform.position + _firePoint, Quaternion.identity);
+
+            //play fire sound if ammo available
+            _audioSource.PlayOneShot(_pewPewSoundClip);
         }
 
-        //play fire sound
-        _audioSource.PlayOneShot(_pewPewSoundClip);
+        //if out of ammo debug log the player is out of ammo
+        else
+        {
+            Debug.Log("The Player is out of Ammo");
+            //update UI to show Ammo is out
+            //play out of ammo sound clip
+        }
+
+        //reduce ammo count by 1
+        _currentTuskAmmo--;
+
+        //clamp ammo count between min and max to avoid negative ammo count
+        int _tuskAmmoClamp = Mathf.Clamp(_currentTuskAmmo, _minTuskAmmo, _maxTuskAmmo);
+
+        //assign current value to be clamped value
+        _currentTuskAmmo = _tuskAmmoClamp;
+
+        //update UI element for Ammo count after firing
+        _uiManager.UpdateTuskAmmo(_currentTuskAmmo);
     }
 
     void FlipperThrusters()
@@ -463,6 +502,7 @@ public class Player : MonoBehaviour
 
      public void ShieldActive()
     {
+        _shieldHealth = _maxShieldHealth;
         _isShieldActive = true;
         _bubbleShield.SetActive(true);
     }
