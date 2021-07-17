@@ -2913,6 +2913,7 @@ MonoBehaviour:
   - {fileID: 3344105562323477131, guid: 66a46910c2d242d44a2af6b052ca1d0e, type: 3}
   - {fileID: 5125037443927600825, guid: 3d25cd31c53650e47b6716ee74c7006c, type: 3}
   - {fileID: 1897889102421594680, guid: acb1f3bee8ad9974bb8665b274564c17, type: 3}
+  - {fileID: 7943929318393307175, guid: 71c38de8464499447b3cc9414654a642, type: 3}
   _enemySpawnRate: 1
   _powerupSpawnRateMin: 7
   _powerupSpawnRateMax: 12

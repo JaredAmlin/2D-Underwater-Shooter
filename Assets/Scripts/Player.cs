@@ -64,6 +64,8 @@ public class Player : MonoBehaviour
     private bool _isTripleTuskActive = false;
     private bool _isFlipperBoostActive = false;
     private bool _isShieldActive = false;
+    //variable to switch if out of ammo and powerup is spawned
+    private bool _hasSpawnedAmmoReload = false;
 
     //bool to handle if my player can thrust
     [SerializeField] private bool _canThrust = false;
@@ -259,6 +261,14 @@ public class Player : MonoBehaviour
 
         //update UI element for Ammo count after firing
         _uiManager.UpdateTuskAmmo(_currentTuskAmmo);
+
+        //tell spawn manager to spawn a single ammo reload if the player is out of ammo
+        //conditional bool so it doesn't keep spawning many powerups
+        if (_currentTuskAmmo == _minTuskAmmo && _hasSpawnedAmmoReload == false)
+        {
+            _hasSpawnedAmmoReload = true;
+            _spawnManager.PlayerOutOfAmmo();
+        }
     }
 
     void FlipperThrusters()
@@ -469,6 +479,16 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void PlayerReload()
+    {
+        //set the player's ammo to be the maximum value
+        _currentTuskAmmo = _maxTuskAmmo;
+        //update the UI to show max ammo visual
+        _uiManager.UpdateTuskAmmo(_currentTuskAmmo);
+        //reset bool to spawn ammo powerup if empty
+        _hasSpawnedAmmoReload = false;
+    }
+
     public void TripleTuskActive()
     {
         StartCoroutine(TripleTuskPowerDownRoutine());
@@ -504,6 +524,7 @@ public class Player : MonoBehaviour
     {
         _shieldHealth = _maxShieldHealth;
         _isShieldActive = true;
+        _shieldSpriteRenderer.color = Color.white;
         _bubbleShield.SetActive(true);
     }
 

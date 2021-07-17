@@ -41,10 +41,16 @@ public class SpawnManager : MonoBehaviour
         while (_stopSpawning == false)
         {
             Vector3 _powerupSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
-            int _randomPowerup = Random.Range(0, 4);
+            int _randomPowerup = Random.Range(0, 5);
             Instantiate(powerups[_randomPowerup], _powerupSpawnPosition, Quaternion.identity);
             yield return new WaitForSeconds(_powerupSpawnRate);
         }
+    }
+
+    public void PlayerOutOfAmmo()
+    {
+        Vector3 _powerupSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
+        Instantiate(powerups[4], _powerupSpawnPosition, Quaternion.identity);
     }
 
     public void OnPlayerDeath()
