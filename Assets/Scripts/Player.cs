@@ -43,6 +43,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float _tuskFireRate = 0.5f;
     private float _canFireTusk = 0f;
 
+    private float _bubbleBlasterFireRate = 0.1f;
+    private float _canFireBubbleBlaster = 0f;
+
     //variable for current ammo count
     [SerializeField] private int _currentTuskAmmo;
     //variable for max ammo count
@@ -64,6 +67,8 @@ public class Player : MonoBehaviour
     private bool _isTripleTuskActive = false;
     private bool _isFlipperBoostActive = false;
     private bool _isShieldActive = false;
+    //variable for if Bubble Blaster is active
+    [SerializeField] private bool _isBubbleBlasterActive = false;
     //variable to switch if out of ammo and powerup is spawned
     private bool _hasSpawnedAmmoReload = false;
 
@@ -77,6 +82,9 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _tuskPrefab;
     [SerializeField] private GameObject _tripleTuskPrefab;
     [SerializeField] private GameObject _bubbleShield;
+
+    //game object variable for bubble blaster prefab special weapon
+    [SerializeField] private GameObject _bubbleBlasterPrefab;
 
     //game object variables for player damage visualization
     [SerializeField] private GameObject _damageScarSingle;
@@ -221,53 +229,65 @@ public class Player : MonoBehaviour
 
     void FireWeapon()
     {
-        _canFireTusk = Time.time + _tuskFireRate;
-        Vector3 _firePoint = new Vector3(2f, 0.2f, 0);
-
-        //add condition to fire if ammo count is greater than zero
-        if (_isTripleTuskActive == true && _currentTuskAmmo > _minTuskAmmo)
+        if (_isBubbleBlasterActive == true && Time.time > _canFireBubbleBlaster)
         {
-            Instantiate(_tripleTuskPrefab, transform.position + _firePoint, Quaternion.identity);
+            _canFireBubbleBlaster = Time.time + _bubbleBlasterFireRate;
+            Vector3 _firePoint = new Vector3(2f, 0.2f, 0);
 
-            //play fire sound if ammo available
-            _audioSource.PlayOneShot(_pewPewSoundClip);
+            //Instantiate Bubble blaster
+            Instantiate(_bubbleBlasterPrefab, transform.position + _firePoint, Quaternion.identity);
         }
 
-        //add condition if ammo count is greater than zero
-        else if (_currentTuskAmmo > _minTuskAmmo)
+        else if (_isBubbleBlasterActive == false)
         {
-            Instantiate(_tuskPrefab, transform.position + _firePoint, Quaternion.identity);
+            _canFireTusk = Time.time + _tuskFireRate;
+            Vector3 _firePoint = new Vector3(2f, 0.2f, 0);
 
-            //play fire sound if ammo available
-            _audioSource.PlayOneShot(_pewPewSoundClip);
-        }
+            //add condition to fire if ammo count is greater than zero
+            if (_isTripleTuskActive == true && _currentTuskAmmo > _minTuskAmmo)
+            {
+                Instantiate(_tripleTuskPrefab, transform.position + _firePoint, Quaternion.identity);
 
-        //if out of ammo debug log the player is out of ammo
-        else
-        {
-            Debug.Log("The Player is out of Ammo");
-            //update UI to show Ammo is out
-            //play out of ammo sound clip
-        }
+                //play fire sound if ammo available
+                _audioSource.PlayOneShot(_pewPewSoundClip);
+            }
 
-        //reduce ammo count by 1
-        _currentTuskAmmo--;
+            //add condition if ammo count is greater than zero
+            else if (_currentTuskAmmo > _minTuskAmmo)
+            {
+                Instantiate(_tuskPrefab, transform.position + _firePoint, Quaternion.identity);
 
-        //clamp ammo count between min and max to avoid negative ammo count
-        int _tuskAmmoClamp = Mathf.Clamp(_currentTuskAmmo, _minTuskAmmo, _maxTuskAmmo);
+                //play fire sound if ammo available
+                _audioSource.PlayOneShot(_pewPewSoundClip);
+            }
 
-        //assign current value to be clamped value
-        _currentTuskAmmo = _tuskAmmoClamp;
+            //if out of ammo debug log the player is out of ammo
+            else
+            {
+                Debug.Log("The Player is out of Ammo");
+                //update UI to show Ammo is out
+                //play out of ammo sound clip
+            }
 
-        //update UI element for Ammo count after firing
-        _uiManager.UpdateTuskAmmo(_currentTuskAmmo);
+            //reduce ammo count by 1
+            _currentTuskAmmo--;
 
-        //tell spawn manager to spawn a single ammo reload if the player is out of ammo
-        //conditional bool so it doesn't keep spawning many powerups
-        if (_currentTuskAmmo == _minTuskAmmo && _hasSpawnedAmmoReload == false)
-        {
-            _hasSpawnedAmmoReload = true;
-            _spawnManager.PlayerOutOfAmmo();
+            //clamp ammo count between min and max to avoid negative ammo count
+            int _tuskAmmoClamp = Mathf.Clamp(_currentTuskAmmo, _minTuskAmmo, _maxTuskAmmo);
+
+            //assign current value to be clamped value
+            _currentTuskAmmo = _tuskAmmoClamp;
+
+            //update UI element for Ammo count after firing
+            _uiManager.UpdateTuskAmmo(_currentTuskAmmo);
+
+            //tell spawn manager to spawn a single ammo reload if the player is out of ammo
+            //conditional bool so it doesn't keep spawning many powerups
+            if (_currentTuskAmmo == _minTuskAmmo && _hasSpawnedAmmoReload == false)
+            {
+                _hasSpawnedAmmoReload = true;
+                _spawnManager.PlayerOutOfAmmo();
+            }
         }
     }
 
@@ -518,6 +538,21 @@ public class Player : MonoBehaviour
         _isFlipperBoostActive = false;
 
         _currentSpeed = _defaultSpeed;
+    }
+
+    public void BubbleBlasterActive()
+    {
+        //Start coroutine for bobble blaster
+        StartCoroutine(BubbleBlasterPowerDownRoutine());
+    }
+
+    IEnumerator BubbleBlasterPowerDownRoutine()
+    {
+        _isBubbleBlasterActive = true;
+
+        yield return new WaitForSeconds(5f);
+
+        _isBubbleBlasterActive = false;
     }
 
      public void ShieldActive()

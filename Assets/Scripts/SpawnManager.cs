@@ -11,18 +11,24 @@ public class SpawnManager : MonoBehaviour
     private bool _stopSpawning = false;
 
     [SerializeField] private float _enemySpawnRate = 1f;
+
     private float _powerupSpawnRate;
     [SerializeField] private float _powerupSpawnRateMin = 7f;
     [SerializeField] private float _powerupSpawnRateMax = 12f;
 
+    //spawn rate for bubble blaster
+    private float _bubbleBlasterSpawnRate;
+    [SerializeField] private float _bubbBlasterSpawnRateMin = 30f;
+    [SerializeField] private float _bubbleBlasterSpawnRateMax = 45f;
+
     // Start is called before the first frame update
     void Start()
     {
-        _powerupSpawnRate = Random.Range(_powerupSpawnRateMin, _powerupSpawnRateMax);
-
         StartCoroutine(SpawnEnemyRoutine());
 
         StartCoroutine(SpawnPowerupRoutine());
+
+        StartCoroutine(SpawnBubbleBlasterRoutine());
     }
 
     IEnumerator SpawnEnemyRoutine()
@@ -42,8 +48,23 @@ public class SpawnManager : MonoBehaviour
         {
             Vector3 _powerupSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
             int _randomPowerup = Random.Range(0, 5);
+            _powerupSpawnRate = Random.Range(_powerupSpawnRateMin, _powerupSpawnRateMax);
             Instantiate(powerups[_randomPowerup], _powerupSpawnPosition, Quaternion.identity);
             yield return new WaitForSeconds(_powerupSpawnRate);
+        }
+    }
+
+    IEnumerator SpawnBubbleBlasterRoutine()
+    {
+        //wait the minimum spawn rate before spawning first powerup
+        yield return new WaitForSeconds(_bubbBlasterSpawnRateMin);
+        //seperate while loop for bubble blaster spawning
+        while (_stopSpawning == false)
+        {
+            Vector3 _powerupSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
+            _bubbleBlasterSpawnRate = Random.Range(_bubbBlasterSpawnRateMin, _bubbleBlasterSpawnRateMax);
+            Instantiate(powerups[5], _powerupSpawnPosition, Quaternion.identity);
+            yield return new WaitForSeconds(_bubbleBlasterSpawnRate);
         }
     }
 

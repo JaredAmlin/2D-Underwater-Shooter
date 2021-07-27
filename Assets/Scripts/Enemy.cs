@@ -89,9 +89,12 @@ public class Enemy : MonoBehaviour
             _enemyRB.gravityScale = 1f;
         }
 
-        if (other.tag == "Tusk")
+        else if (other.tag == "Tusk")
         {
-            Destroy(other.gameObject);
+            if (other != null)
+            {
+                Destroy(other.gameObject);
+            }
 
             //communicate with UI Manager
             //add 10 points to score
@@ -103,6 +106,32 @@ public class Enemy : MonoBehaviour
             _enemyCollider.enabled = false;
             _spriteRenderer.color = Color.blue;
             _spriteRenderer.flipY = true;
+            _enemyRB.gravityScale = 1f;
+        }
+
+        else if (other.tag == "Bubble_Blaster")
+        {
+            if (other != null)
+            {
+                Destroy(other.gameObject);
+            }
+
+            //debug message to see if tag is working
+            Debug.Log("the enemy hit the bubble blaster");
+
+            //add 10 points to the score
+            if (_uiManager != null)
+            {
+                _uiManager.UpdateScore(10);
+            }
+
+            //disable enemy collider
+            _enemyCollider.enabled = false;
+            //set color to blue
+            _spriteRenderer.color = Color.blue;
+            //flip sprite upside down
+            _spriteRenderer.flipY = true;
+            //turn on gravity for on death movement
             _enemyRB.gravityScale = 1f;
         }
     }
