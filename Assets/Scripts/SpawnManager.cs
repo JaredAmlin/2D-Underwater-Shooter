@@ -47,7 +47,7 @@ public class SpawnManager : MonoBehaviour
         while (_stopSpawning == false)
         {
             Vector3 _powerupSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
-            int _randomPowerup = Random.Range(0, 5);
+            int _randomPowerup = Random.Range(0, 6);
             _powerupSpawnRate = Random.Range(_powerupSpawnRateMin, _powerupSpawnRateMax);
             Instantiate(powerups[_randomPowerup], _powerupSpawnPosition, Quaternion.identity);
             yield return new WaitForSeconds(_powerupSpawnRate);
@@ -63,7 +63,7 @@ public class SpawnManager : MonoBehaviour
         {
             Vector3 _powerupSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
             _bubbleBlasterSpawnRate = Random.Range(_bubbBlasterSpawnRateMin, _bubbleBlasterSpawnRateMax);
-            Instantiate(powerups[5], _powerupSpawnPosition, Quaternion.identity);
+            Instantiate(powerups[6], _powerupSpawnPosition, Quaternion.identity);
             yield return new WaitForSeconds(_bubbleBlasterSpawnRate);
         }
     }

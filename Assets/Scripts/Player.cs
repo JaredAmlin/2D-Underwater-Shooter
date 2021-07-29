@@ -72,6 +72,9 @@ public class Player : MonoBehaviour
     //variable to switch if out of ammo and powerup is spawned
     private bool _hasSpawnedAmmoReload = false;
 
+    //variable to store if player penalty is active
+    [SerializeField] private bool _isPlayerPenaltyActive = false;
+
     //bool to handle if my player can thrust
     [SerializeField] private bool _canThrust = false;
     //bool to handle if my deceleration rates should be active
@@ -216,7 +219,17 @@ public class Player : MonoBehaviour
         FlipperThrusters();
 
         Vector3 _direction = new Vector3(_horizontalInput, _verticalInput, 0).normalized;
-        transform.Translate(_direction * _currentSpeed * Time.deltaTime);
+
+        //condition to check if player penalty is active or not
+        if (_isPlayerPenaltyActive == true)
+        {
+            transform.Translate(-_direction * _currentSpeed * Time.deltaTime);
+        }
+
+        else
+        {
+            transform.Translate(_direction * _currentSpeed * Time.deltaTime);
+        }
     }
 
     void PlayerBoundaries()
@@ -579,6 +592,20 @@ public class Player : MonoBehaviour
         _isThrustingSwitch = false;
         yield return new WaitForSeconds(_thrusterCoolDownTime);
         _canThrust = true;
+    }
+
+    public void PlayerPenaltyActive()
+    {
+        StartCoroutine(PlayerPenaltyPowerDownRoutine());
+    }
+
+    IEnumerator PlayerPenaltyPowerDownRoutine()
+    {
+        _isPlayerPenaltyActive = true;
+
+        yield return new WaitForSeconds(5f);
+
+        _isPlayerPenaltyActive = false;
     }
 
     void PlayerHurtAnimation()

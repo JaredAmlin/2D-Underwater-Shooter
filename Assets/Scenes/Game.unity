@@ -1098,6 +1098,7 @@ MonoBehaviour:
   _maxLives: 3
   _shieldHealth: 0
   _isBubbleBlasterActive: 0
+  _isPlayerPenaltyActive: 0
   _canThrust: 0
   _isThrusting: 0
   _isThrustingSwitch: 0
@@ -1891,63 +1892,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1001 &1108656879
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 352430361880796320, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_Name
-      value: Bubble_Blaster_Powerup
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_RootOrder
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 9.17
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 352430361880796322, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
 --- !u!1 &1115786946
 GameObject:
   m_ObjectHideFlags: 0
@@ -2973,6 +2917,7 @@ MonoBehaviour:
   - {fileID: 5125037443927600825, guid: 3d25cd31c53650e47b6716ee74c7006c, type: 3}
   - {fileID: 1897889102421594680, guid: acb1f3bee8ad9974bb8665b274564c17, type: 3}
   - {fileID: 7943929318393307175, guid: 71c38de8464499447b3cc9414654a642, type: 3}
+  - {fileID: 2137189618582772199, guid: 2a93d9ae2fe36154ab3d10d971acd216, type: 3}
   - {fileID: 352430361880796320, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
   _enemySpawnRate: 1
   _powerupSpawnRateMin: 7

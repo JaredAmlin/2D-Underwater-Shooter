@@ -11,7 +11,7 @@ public class Powerup : MonoBehaviour
     [SerializeField] private AudioClip _powerupSoundClip;
 
     //ID for Powerups
-    //0 = Triple Tusk, 1 = Flipper Boost, 2 = Bubble Shield, 3 = Health, 4 = Tusk Ammo Reload, 5 = Bubble Blaster
+    //0 = Triple Tusk, 1 = Flipper Boost, 2 = Bubble Shield, 3 = Health, 4 = Tusk Ammo Reload , 5 = Player Penalty, 6 = Bubble Blaster
     [SerializeField] private int _powerupID;
 
     // Start is called before the first frame update
@@ -71,8 +71,13 @@ public class Powerup : MonoBehaviour
                         //call payer to reload ammo. make reload method in player class. 
                         _player.PlayerReload();
                         break;
-                    case 5: //new case for Bubble Blaster Powerup
-                        //call player to start Bubble Blaster coroutine
+                    case 5: //new case for Player Penalty Powerup
+                        //call player to start Player Panalty coroutine
+                        Debug.Log("The Player Penalty Powerup collided with the Player");
+                        _player.PlayerPenaltyActive();
+                        break;
+                    case 6: //new case for Bubble Blaster Powerup
+                        //call player to start Bubble Blaster method
                         Debug.Log("The Bubble Blaster Powerup collided with the Player");
                         _player.BubbleBlasterActive();
                         break;

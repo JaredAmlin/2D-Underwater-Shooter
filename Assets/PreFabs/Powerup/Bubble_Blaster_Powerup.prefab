@@ -234,7 +234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 2
   _powerupSoundClip: {fileID: 8300000, guid: 745961f771b6e4649964f31422bf2906, type: 3}
-  _powerupID: 5
+  _powerupID: 6
 --- !u!1 &3713254377640304384
 GameObject:
   m_ObjectHideFlags: 0
