@@ -6,7 +6,11 @@ public class Powerup : MonoBehaviour
 {
     [SerializeField] private float _speed = 3f;
 
+    [SerializeField] private float _playerPullSpeed = 5f;
+
     private Player _player;
+
+    private bool _isPlayerPullingPowerups = false;
 
     [SerializeField] private AudioClip _powerupSoundClip;
 
@@ -32,7 +36,22 @@ public class Powerup : MonoBehaviour
 
     void PowerupMovement()
     {
-        transform.Translate(Vector3.left * _speed * Time.deltaTime);
+        if (_player != null)
+        {
+            _isPlayerPullingPowerups = _player.PowerupPullCheck();
+        }
+
+        if (_player != null && _isPlayerPullingPowerups == true)
+        {
+            Debug.Log(_isPlayerPullingPowerups);
+
+            transform.position = Vector2.MoveTowards(this.transform.position, _player.transform.position, _playerPullSpeed * Time.deltaTime);
+        }
+
+        else
+        {
+            transform.Translate(Vector3.left * _speed * Time.deltaTime);
+        }
 
         PowerupBoundaries();
     }

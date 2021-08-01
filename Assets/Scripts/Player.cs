@@ -82,6 +82,9 @@ public class Player : MonoBehaviour
     //bool to set isThrusting in update one time when shift is pressed
     [SerializeField] private bool _isThrustingSwitch = false;
 
+    //bool for if player is pulling powerups
+    private bool _isPullingPowrups = false;
+
     [SerializeField] private GameObject _tuskPrefab;
     [SerializeField] private GameObject _tripleTuskPrefab;
     [SerializeField] private GameObject _bubbleShield;
@@ -207,6 +210,8 @@ public class Player : MonoBehaviour
         {
             FireWeapon();
         }
+
+        PullPowerupsToPlayer();
     }
 
     void PlayerMovement()
@@ -606,6 +611,26 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(5f);
 
         _isPlayerPenaltyActive = false;
+    }
+
+    //method to check C key and set bool for pulling poewrups
+    void PullPowerupsToPlayer()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            _isPullingPowrups = true;
+        }
+
+        else if (Input.GetKeyUp(KeyCode.C))
+        {
+            _isPullingPowrups = false;
+        }
+    }
+
+    //public method for powerup to get return on bool
+    public bool PowerupPullCheck()
+    {
+        return _isPullingPowrups;
     }
 
     void PlayerHurtAnimation()
