@@ -83,7 +83,7 @@ public class Player : MonoBehaviour
     [SerializeField] private bool _isThrustingSwitch = false;
 
     //bool for if player is pulling powerups
-    private bool _isPullingPowrups = false;
+    private bool _isPullingPowerups = false;
 
     [SerializeField] private GameObject _tuskPrefab;
     [SerializeField] private GameObject _tripleTuskPrefab;
@@ -618,19 +618,19 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
-            _isPullingPowrups = true;
+            _isPullingPowerups = true;
         }
 
         else if (Input.GetKeyUp(KeyCode.C))
         {
-            _isPullingPowrups = false;
+            _isPullingPowerups = false;
         }
     }
 
     //public method for powerup to get return on bool
     public bool PowerupPullCheck()
     {
-        return _isPullingPowrups;
+        return _isPullingPowerups;
     }
 
     void PlayerHurtAnimation()

@@ -9,6 +9,15 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float _bottomRespawnRange = -5.1f;
     [SerializeField] private float _topRespawnRange = 5.1f;
 
+    //raandom int variable to roll for if enemy gets a shield
+    private int _randomEnemyShield;
+
+    //bool for if the shield is active
+    private bool _isEnemyShieldActive = false;
+
+    //variable for shield game object
+    [SerializeField] private GameObject _enemyBubbleShield;
+
     private Rigidbody2D _enemyRB;
     private PolygonCollider2D _enemyCollider;
     private SpriteRenderer _spriteRenderer;
@@ -36,6 +45,18 @@ public class Enemy : MonoBehaviour
         if (_uiManager == null)
         {
             Debug.LogError("The UI Manager is NULL");
+        }
+
+        //give range of 5 for random shield value
+        _randomEnemyShield = Random.Range(0, 5);
+
+        if (_randomEnemyShield == 0)
+        {
+            //set the shield game object to active
+            _enemyBubbleShield.SetActive(true);
+
+            //set avtive bool to true
+            _isEnemyShieldActive = true;
         }
     }
 
@@ -72,6 +93,33 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    //method for checking enemy shields
+    void EnemyShieldCheck()
+    {
+        //check if shield is active
+        if (_isEnemyShieldActive == true)
+        {
+            _isEnemyShieldActive = false;
+
+            _enemyBubbleShield.SetActive(false);
+
+            return;
+        }
+
+        else
+        {
+            EnemyOnDeathBehavior();
+        }
+    }
+
+    void EnemyOnDeathBehavior()
+    {
+        _enemyCollider.enabled = false;
+        _spriteRenderer.color = Color.blue;
+        _spriteRenderer.flipY = true;
+        _enemyRB.gravityScale = 1f;
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("Enemy collided with " + other.transform.name + " at the location of " + other.transform.position);
@@ -83,10 +131,7 @@ public class Enemy : MonoBehaviour
                 _player.Damage();
             }
 
-            _enemyCollider.enabled = false;
-            _spriteRenderer.color = Color.blue;
-            _spriteRenderer.flipY = true;
-            _enemyRB.gravityScale = 1f;
+            EnemyShieldCheck();
         }
 
         else if (other.tag == "Tusk")
@@ -103,10 +148,7 @@ public class Enemy : MonoBehaviour
                 _uiManager.UpdateScore(10);
             }
 
-            _enemyCollider.enabled = false;
-            _spriteRenderer.color = Color.blue;
-            _spriteRenderer.flipY = true;
-            _enemyRB.gravityScale = 1f;
+            EnemyShieldCheck();
         }
 
         else if (other.tag == "Bubble_Blaster")
@@ -125,14 +167,7 @@ public class Enemy : MonoBehaviour
                 _uiManager.UpdateScore(10);
             }
 
-            //disable enemy collider
-            _enemyCollider.enabled = false;
-            //set color to blue
-            _spriteRenderer.color = Color.blue;
-            //flip sprite upside down
-            _spriteRenderer.flipY = true;
-            //turn on gravity for on death movement
-            _enemyRB.gravityScale = 1f;
+            EnemyShieldCheck();
         }
     }
 }
