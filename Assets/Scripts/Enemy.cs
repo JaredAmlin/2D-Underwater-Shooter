@@ -5,6 +5,8 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed = 2.5f;
+    //varible for thrust for jellyfish
+    private float _jellyfishThrust = 150f;
 
     [SerializeField] private float _bottomRespawnRange = -5.1f;
     [SerializeField] private float _topRespawnRange = 5.1f;
@@ -12,8 +14,15 @@ public class Enemy : MonoBehaviour
     //raandom int variable to roll for if enemy gets a shield
     private int _randomEnemyShield;
 
+    //varibale for enemy ID
+    //0 = piranha, 1 = jellyfish
+    [SerializeField] private int _enemyID;
+
     //bool for if the shield is active
     private bool _isEnemyShieldActive = false;
+
+    //bool for if the enemy is dead
+    private bool _isEnemyDead = false;
 
     //variable for shield game object
     [SerializeField] private GameObject _enemyBubbleShield;
@@ -30,8 +39,6 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         _enemyRB = GetComponent<Rigidbody2D>();
-        _enemyCollider = GetComponent<PolygonCollider2D>();
-        _spriteRenderer = GetComponent<SpriteRenderer>();
 
         _player = GameObject.Find("Player").GetComponent<Player>();
 
@@ -47,16 +54,27 @@ public class Enemy : MonoBehaviour
             Debug.LogError("The UI Manager is NULL");
         }
 
-        //give range of 5 for random shield value
-        _randomEnemyShield = Random.Range(0, 5);
-
-        if (_randomEnemyShield == 0)
+        if (_enemyID == 0)
         {
-            //set the shield game object to active
-            _enemyBubbleShield.SetActive(true);
+            _enemyCollider = GetComponent<PolygonCollider2D>();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
 
-            //set avtive bool to true
-            _isEnemyShieldActive = true;
+            //give range of 5 for random shield value
+            _randomEnemyShield = Random.Range(0, 5);
+
+            if (_randomEnemyShield == 0)
+            {
+                //set the shield game object to active
+                _enemyBubbleShield.SetActive(true);
+
+                //set avtive bool to true
+                _isEnemyShieldActive = true;
+            }
+        }
+
+        else if (_enemyID == 1)
+        {
+            StartCoroutine(JellyfishMovementRoutine());
         }
     }
 
@@ -68,12 +86,29 @@ public class Enemy : MonoBehaviour
 
     void EnemyMovement()
     {
-        transform.Translate(Vector3.left * _speed * Time.deltaTime);
+        //make movement for piranha only
+        if (_enemyID == 0)
+        {
+            transform.Translate(Vector3.left * _speed * Time.deltaTime);
+            PiranhaBoundaries();
+        }
 
-        EnemyBoundaries();
+        else if (_enemyID == 1)
+        {
+            JellyfishBoundaries();
+        }
     }
 
-    void EnemyBoundaries()
+    IEnumerator JellyfishMovementRoutine()
+    {
+        while (_isEnemyDead == false)
+        {
+            _enemyRB.AddForce(transform.up * _jellyfishThrust);
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    void PiranhaBoundaries()
     {
         if (transform.position.x <= -12f)
         {
@@ -90,6 +125,16 @@ public class Enemy : MonoBehaviour
         if (transform.position.x <= -11.5f && _enemyRB.gravityScale == 1)
         {
             Destroy(this.gameObject);
+        }
+    }
+
+    void JellyfishBoundaries()
+    {
+        if (transform.position.y >= 6.5f)
+        {
+            float randomX = Random.Range(-8f, 8f);
+            Vector3 _jellyfishRespawnPosition = new Vector3(randomX, -6.5f, 0);
+            transform.position = _jellyfishRespawnPosition;
         }
     }
 
@@ -114,10 +159,19 @@ public class Enemy : MonoBehaviour
 
     void EnemyOnDeathBehavior()
     {
-        _enemyCollider.enabled = false;
-        _spriteRenderer.color = Color.blue;
-        _spriteRenderer.flipY = true;
-        _enemyRB.gravityScale = 1f;
+        if (_enemyID == 0)
+        {
+            _enemyCollider.enabled = false;
+            _spriteRenderer.color = Color.blue;
+            _spriteRenderer.flipY = true;
+            _enemyRB.gravityScale = 1f;
+        }
+        
+        else if (_enemyID == 1)
+        {
+            _isEnemyDead = true;
+            Destroy(this.gameObject);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
