@@ -109,6 +109,7 @@ public class Player : MonoBehaviour
     private SpriteRenderer _shieldSpriteRenderer;
     [SerializeField] private AudioClip _pewPewSoundClip;
     [SerializeField] private AudioClip _bubblePopSoundClip;
+    [SerializeField] private AudioClip _outOfAmmoSoundClip;
     private AudioSource _audioSource;
 
     [SerializeField] private Color _shieldDamageColor1;
@@ -285,6 +286,7 @@ public class Player : MonoBehaviour
                 Debug.Log("The Player is out of Ammo");
                 //update UI to show Ammo is out
                 //play out of ammo sound clip
+                _audioSource.PlayOneShot(_outOfAmmoSoundClip);
             }
 
             //reduce ammo count by 1

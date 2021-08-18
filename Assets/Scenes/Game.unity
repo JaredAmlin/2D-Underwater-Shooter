@@ -1110,6 +1110,7 @@ MonoBehaviour:
   _damageScarDouble: {fileID: 2055244526}
   _pewPewSoundClip: {fileID: 8300000, guid: 0bae0f3a351ee684a834fa195527f997, type: 3}
   _bubblePopSoundClip: {fileID: 8300000, guid: 3cbada778447d0f459141c5d637a27f4, type: 3}
+  _outOfAmmoSoundClip: {fileID: 8300000, guid: 2f88bb8830a598642b7d3c396ca7e923, type: 3}
   _shieldDamageColor1: {r: 0.74509805, g: 0.74509805, b: 0.9019608, a: 1}
   _shieldDamageColor2: {r: 0.74509805, g: 0.74509805, b: 0.9019608, a: 0.6666667}
 --- !u!212 &569956166
