@@ -135,7 +135,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 2
-  m_AngularDrag: 0.05
+  m_AngularDrag: 2
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -155,7 +155,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 2.5
+  _jellyfishThrust: 150
+  _rammingThrust: 300
+  _rotationSpeed: 200
+  _rammingDistance: 5
   _bottomRespawnRange: -5.1
   _topRespawnRange: 5.1
   _enemyID: 1
+  _isRamming: 0
   _enemyBubbleShield: {fileID: 0}

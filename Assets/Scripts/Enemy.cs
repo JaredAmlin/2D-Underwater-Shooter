@@ -6,12 +6,20 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed = 2.5f;
     //varible for thrust for jellyfish
-    private float _jellyfishThrust = 150f;
+    [SerializeField] private float _jellyfishThrust = 150f;
+    //variable for higher thrust amount for ramming the player
+    [SerializeField] private float _rammingThrust = 300f;
+    //variable for reassignable thrust amount
+    private float _currentThrust;
+    //speed for rotation in radians per second
+    [SerializeField] private float _rotationSpeed = 150f;
+    //variable for distance value, to ram the player or not
+    [SerializeField] private float _rammingDistance = 5f;
 
     [SerializeField] private float _bottomRespawnRange = -5.1f;
     [SerializeField] private float _topRespawnRange = 5.1f;
 
-    //raandom int variable to roll for if enemy gets a shield
+    //random int variable to roll for if enemy gets a shield
     private int _randomEnemyShield;
 
     //varibale for enemy ID
@@ -24,6 +32,9 @@ public class Enemy : MonoBehaviour
     //bool for if the enemy is dead
     private bool _isEnemyDead = false;
 
+    //bool to handle if the enemy is ramming the player
+    [SerializeField] private bool _isRamming = false;
+
     //variable for shield game object
     [SerializeField] private GameObject _enemyBubbleShield;
 
@@ -35,6 +46,9 @@ public class Enemy : MonoBehaviour
 
     private Player _player;
 
+    //target varible for the player transform
+    private Transform _target;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +59,21 @@ public class Enemy : MonoBehaviour
         if (_player == null)
         {
             Debug.Log("The Player is NULL");
+        }
+
+        //get handle to player transform
+        _target = _player.GetComponent<Transform>();
+
+        //null check the player transform
+        if (_target == null)
+        {
+            Debug.Log("The Player Transform is NULL");
+        }
+
+        else
+        {
+            //check to see if the get component worked
+            Debug.Log("The player transform is not null");
         }
 
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
@@ -84,6 +113,11 @@ public class Enemy : MonoBehaviour
         EnemyMovement();
     }
 
+    private void FixedUpdate()
+    {
+        RammingJellyfish();
+    }
+
     void EnemyMovement()
     {
         //make movement for piranha only
@@ -95,7 +129,37 @@ public class Enemy : MonoBehaviour
 
         else if (_enemyID == 1)
         {
+            
+            //check to see if the player target is closer than or equal to the ramming distance. 
+            if (_target != null && Vector2.Distance(this.transform.position, _target.transform.position) <= _rammingDistance)
+            {
+                _isRamming = true;
+            }
+            
+            else
+            {
+                _isRamming = false;
+            }
+
             JellyfishBoundaries();
+        }
+    }
+
+    void RammingJellyfish()
+    {
+        //null check the player to avoid missing reference error if player becomes NULL
+        if (_target != null)
+        {
+            if (_isRamming == true)
+            {
+                Vector2 direction = (Vector2)_target.position - _enemyRB.position;
+
+                direction.Normalize();
+
+                float rotationAmount = Vector3.Cross(direction, transform.up).z;
+
+                _enemyRB.angularVelocity = -rotationAmount * _rotationSpeed;
+            }
         }
     }
 
@@ -103,7 +167,18 @@ public class Enemy : MonoBehaviour
     {
         while (_isEnemyDead == false)
         {
-            _enemyRB.AddForce(transform.up * _jellyfishThrust);
+            //check the isRamming bool to assign thrust value
+            if (_isRamming == true)
+            {
+                _currentThrust = _rammingThrust;
+            }
+
+            else
+            {
+                _currentThrust = _jellyfishThrust;
+            }
+
+            _enemyRB.AddForce(transform.up * _currentThrust);
             yield return new WaitForSeconds(1f);
         }
     }
@@ -130,11 +205,22 @@ public class Enemy : MonoBehaviour
 
     void JellyfishBoundaries()
     {
-        if (transform.position.y >= 6.5f)
+        //screen-wrap enemy jellyfish boundaries
+        if (transform.position.y > 6.5f)
         {
-            float randomX = Random.Range(-8f, 8f);
-            Vector3 _jellyfishRespawnPosition = new Vector3(randomX, -6.5f, 0);
-            transform.position = _jellyfishRespawnPosition;
+            transform.position = new Vector3(transform.position.x, -6.5f, 0);
+        }
+        else if (transform.position.y < -6.5f)
+        {
+            transform.position = new Vector3(transform.position.x, 6.5f, 0);
+        }
+        else if (transform.position.x > 11.2f)
+        {
+            transform.position = new Vector3(-11.2f, transform.position.y, 0);
+        }
+        else if (transform.position.x < -11.2f)
+        {
+            transform.position = new Vector3(11.2f, transform.position.y, 0);
         }
     }
 
