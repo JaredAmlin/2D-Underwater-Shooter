@@ -54,7 +54,7 @@ public class SpawnManager : MonoBehaviour
             int _randomEmemy = Random.Range(0, _enemies.Length);
 
             //piranha spawn data
-            if (_randomEmemy == 0)
+            if (_randomEmemy == 0 || _randomEmemy == 2 || _randomEmemy == 3)
             {
                 _enemySpawnPosition = _piranhaSpawnPosition;
                 _enemyRotation = Quaternion.identity;

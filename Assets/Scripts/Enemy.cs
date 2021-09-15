@@ -16,6 +16,17 @@ public class Enemy : MonoBehaviour
     //variable for distance value, to ram the player or not
     [SerializeField] private float _rammingDistance = 5f;
 
+    //variable for sin amplidute: Blowfish
+    [SerializeField] private float _amplitude;
+    //variable for sin frequency: Blowfish
+    [SerializeField] private float _frequency;
+
+    private float _startPositionY;
+
+    private float _redPiranhaFireRate;
+
+    private float _blowFishFireRate;
+
     [SerializeField] private float _bottomRespawnRange = -5.1f;
     [SerializeField] private float _topRespawnRange = 5.1f;
 
@@ -23,7 +34,7 @@ public class Enemy : MonoBehaviour
     private int _randomEnemyShield;
 
     //varibale for enemy ID
-    //0 = piranha, 1 = jellyfish
+    //0 = piranha, 1 = jellyfish, 2 = Red_Piranha, 3 = Blowfish
     [SerializeField] private int _enemyID;
 
     //bool for if the shield is active
@@ -38,13 +49,26 @@ public class Enemy : MonoBehaviour
     //variable for shield game object
     [SerializeField] private GameObject _enemyBubbleShield;
 
+    //variable for the piranha chompers projectile
+    [SerializeField] private GameObject _piranhaChompersPrefab;
+    //variable to store the Blowfish spine projectile
+    [SerializeField] private GameObject _blowfishSpine;
+    //variable for Blowfish Spine array
+    [SerializeField] private int[] _blowfishSpines;
+
     private Rigidbody2D _enemyRB;
     private PolygonCollider2D _enemyCollider;
+    //variable for capsule collider: Blowfish
+    private CapsuleCollider2D _blowfishCollider;
+
     private SpriteRenderer _spriteRenderer;
 
     private UIManager _uiManager;
 
     private Player _player;
+
+    //variable for animator: Blowfish
+    private Animator _animator;
 
     //target varible for the player transform
     private Transform _target;
@@ -87,7 +111,7 @@ public class Enemy : MonoBehaviour
         {
             _enemyCollider = GetComponent<PolygonCollider2D>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
-
+            
             //give range of 5 for random shield value
             _randomEnemyShield = Random.Range(0, 5);
 
@@ -105,6 +129,39 @@ public class Enemy : MonoBehaviour
         {
             StartCoroutine(JellyfishMovementRoutine());
         }
+
+        else if (_enemyID == 2)
+        {
+            _enemyCollider = GetComponent<PolygonCollider2D>();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+
+            _redPiranhaFireRate = Random.Range(2f, 5f);
+            //start firing coroutine
+            StartCoroutine(RedPiranhaFireRoutine());
+            Debug.Log("started firing coroutine for red");
+        }
+
+        else if (_enemyID == 3)
+        {
+            _blowfishCollider = GetComponent<CapsuleCollider2D>();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+            
+            //get component the animator
+            _animator = GetComponent<Animator>();
+            
+            //check the animator
+            if (_animator == null)
+            {
+                Debug.LogError("The Animator on the Blowfish is NULL");
+            }
+            _amplitude = Random.Range(1f, 2.5f);
+            _frequency = Random.Range(1f, 2.5f);
+            _startPositionY = transform.position.y;
+            _blowFishFireRate = Random.Range(2f, 7f);
+            StartCoroutine(BlowFishSinRoutine());
+            //start fireing coroutine for the blowfish
+            StartCoroutine(BlowfishFireRoutine());
+        }
     }
 
     // Update is called once per frame
@@ -121,7 +178,7 @@ public class Enemy : MonoBehaviour
     void EnemyMovement()
     {
         //make movement for piranha only
-        if (_enemyID == 0)
+        if (_enemyID == 0 || _enemyID == 2 || _enemyID == 3)
         {
             transform.Translate(Vector3.left * _speed * Time.deltaTime);
             PiranhaBoundaries();
@@ -148,18 +205,26 @@ public class Enemy : MonoBehaviour
     void RammingJellyfish()
     {
         //null check the player to avoid missing reference error if player becomes NULL
-        if (_target != null)
+        if (_target != null && _isRamming == true)
+        {   
+            Vector2 direction = (Vector2)_target.position - _enemyRB.position;
+
+            direction.Normalize();
+
+            float rotationAmount = Vector3.Cross(direction, transform.up).z;
+
+            _enemyRB.angularVelocity = -rotationAmount * _rotationSpeed;
+        }
+    }
+
+    IEnumerator BlowFishSinRoutine()
+    {
+        while (_isEnemyDead == false)
         {
-            if (_isRamming == true)
-            {
-                Vector2 direction = (Vector2)_target.position - _enemyRB.position;
-
-                direction.Normalize();
-
-                float rotationAmount = Vector3.Cross(direction, transform.up).z;
-
-                _enemyRB.angularVelocity = -rotationAmount * _rotationSpeed;
-            }
+            float currentPositionX = transform.position.x;
+            float sinMovementY = Mathf.Sin(Time.time * _frequency) * _amplitude;
+            transform.position = new Vector3(currentPositionX, _startPositionY + sinMovementY, 0);
+            yield return null;
         }
     }
 
@@ -183,11 +248,57 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    IEnumerator RedPiranhaFireRoutine()
+    {
+        yield return new WaitForSeconds(_redPiranhaFireRate);
+
+        while (_isEnemyDead == false)
+        {
+            _redPiranhaFireRate = Random.Range(2f, 5f);
+
+            Vector3 _firePoint = new Vector3(-0.9f, 0, 0);
+
+            Instantiate(_piranhaChompersPrefab, this.transform.position + _firePoint, Quaternion.identity);
+
+            yield return new WaitForSeconds(_redPiranhaFireRate);
+        }
+    }
+
+    //firing routine for the blowfish
+    IEnumerator BlowfishFireRoutine()
+    {
+        yield return new WaitForSeconds(_blowFishFireRate);
+
+        while (_isEnemyDead == false)
+        {
+            _animator.SetTrigger("IsPuffing");
+
+            yield return new WaitForSeconds(0.1f);
+
+            _blowFishFireRate = Random.Range(2f, 7f);
+
+            Vector3 _firePoint = new Vector3(-0.4f, 0, 0);
+
+            int randomSpines = Random.Range(3, 8);
+            _blowfishSpines = new int[randomSpines];
+
+            for (int spineIndex = 0; spineIndex < _blowfishSpines.Length; spineIndex++)
+            {
+                float _maxDegreesOfRotation = 360;
+                float _blowfishSpineRotation = ((float)_maxDegreesOfRotation / _blowfishSpines.Length) * spineIndex;
+                Instantiate(_blowfishSpine, this.transform.position + _firePoint, Quaternion.Euler(0, 0, _blowfishSpineRotation));
+            }
+
+            yield return new WaitForSeconds(_blowFishFireRate);
+        }
+    }
+
     void PiranhaBoundaries()
     {
         if (transform.position.x <= -12f)
         {
             float _randomY = Random.Range(_bottomRespawnRange, _topRespawnRange);
+            _startPositionY = _randomY;
             Vector3 _enemyRespawnPosition = new Vector3(11.5f, _randomY, 0);
             transform.position = _enemyRespawnPosition;
         }
@@ -245,8 +356,9 @@ public class Enemy : MonoBehaviour
 
     void EnemyOnDeathBehavior()
     {
-        if (_enemyID == 0)
+        if (_enemyID == 0 || _enemyID == 2)
         {
+            _isEnemyDead = true;
             _enemyCollider.enabled = false;
             _spriteRenderer.color = Color.blue;
             _spriteRenderer.flipY = true;
@@ -257,6 +369,15 @@ public class Enemy : MonoBehaviour
         {
             _isEnemyDead = true;
             Destroy(this.gameObject);
+        }
+
+        else if (_enemyID == 3)
+        {
+            _isEnemyDead = true;
+            _blowfishCollider.enabled = false;
+            _spriteRenderer.color = Color.blue;
+            _spriteRenderer.flipY = true;
+            _enemyRB.gravityScale = 1f;
         }
     }
 

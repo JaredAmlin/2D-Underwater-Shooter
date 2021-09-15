@@ -971,6 +971,7 @@ GameObject:
   - component: {fileID: 569956164}
   - component: {fileID: 569956168}
   - component: {fileID: 569956169}
+  - component: {fileID: 569956170}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -1296,6 +1297,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!50 &569956170
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569956163}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &625677363
 GameObject:
   m_ObjectHideFlags: 0
@@ -2922,6 +2944,8 @@ MonoBehaviour:
   _enemies:
   - {fileID: 7060408807984791048, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
   - {fileID: 7980169970400686687, guid: 1feb8168ead05ff498962e748dd690f6, type: 3}
+  - {fileID: 3817380762332384490, guid: 4d3b2b0c03495094f90fc6efb3e581fc, type: 3}
+  - {fileID: 8466417191842869093, guid: 1d89fa3942a9ca84490895a42a36fbf3, type: 3}
   _enemySpawnRate: 1.5
   _powerupSpawnRateMin: 7
   _powerupSpawnRateMax: 12
