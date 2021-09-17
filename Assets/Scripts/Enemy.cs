@@ -159,7 +159,7 @@ public class Enemy : MonoBehaviour
             _startPositionY = transform.position.y;
             _blowFishFireRate = Random.Range(2f, 7f);
             StartCoroutine(BlowFishSinRoutine());
-            //start fireing coroutine for the blowfish
+            //start firing coroutine for the blowfish
             StartCoroutine(BlowfishFireRoutine());
         }
     }
@@ -178,7 +178,7 @@ public class Enemy : MonoBehaviour
     void EnemyMovement()
     {
         //make movement for piranha only
-        if (_enemyID == 0 || _enemyID == 2 || _enemyID == 3)
+        if (_enemyID == 0 || _enemyID == 3)
         {
             transform.Translate(Vector3.left * _speed * Time.deltaTime);
             PiranhaBoundaries();
@@ -199,6 +199,11 @@ public class Enemy : MonoBehaviour
             }
 
             JellyfishBoundaries();
+        }
+
+        else if (_enemyID == 2)
+        {
+            PiranhaBoundaries();
         }
     }
 
@@ -303,13 +308,23 @@ public class Enemy : MonoBehaviour
             transform.position = _enemyRespawnPosition;
         }
 
-        if (transform.position.y <= -6.5f)
+        if (transform.position.y <= -8.5f)
         {
+            if (_enemyID == 2)
+            {
+                Destroy(this.transform.parent.gameObject);
+            }
+            
             Destroy(this.gameObject);
         }
 
         if (transform.position.x <= -11.5f && _enemyRB.gravityScale == 1)
         {
+            if (_enemyID == 2)
+            {
+                Destroy(this.transform.parent.gameObject);
+            }
+
             Destroy(this.gameObject);
         }
     }
@@ -356,7 +371,7 @@ public class Enemy : MonoBehaviour
 
     void EnemyOnDeathBehavior()
     {
-        if (_enemyID == 0 || _enemyID == 2)
+        if (_enemyID == 0)
         {
             _isEnemyDead = true;
             _enemyCollider.enabled = false;
@@ -364,11 +379,24 @@ public class Enemy : MonoBehaviour
             _spriteRenderer.flipY = true;
             _enemyRB.gravityScale = 1f;
         }
-        
+
         else if (_enemyID == 1)
         {
             _isEnemyDead = true;
             Destroy(this.gameObject);
+        }
+
+        else if (_enemyID == 2)
+        {
+            CircleCollider2D _parentCollider = this.GetComponentInParent<CircleCollider2D>();
+
+            Destroy(_parentCollider);
+
+            _isEnemyDead = true;
+            _enemyCollider.enabled = false;
+            _spriteRenderer.color = Color.blue;
+            _spriteRenderer.flipY = true;
+            _enemyRB.gravityScale = 1f;
         }
 
         else if (_enemyID == 3)

@@ -2944,7 +2944,7 @@ MonoBehaviour:
   _enemies:
   - {fileID: 7060408807984791048, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
   - {fileID: 7980169970400686687, guid: 1feb8168ead05ff498962e748dd690f6, type: 3}
-  - {fileID: 3817380762332384490, guid: 4d3b2b0c03495094f90fc6efb3e581fc, type: 3}
+  - {fileID: 166282088302183001, guid: 8ac3d412305fe0748a61f196768f1c3d, type: 3}
   - {fileID: 8466417191842869093, guid: 1d89fa3942a9ca84490895a42a36fbf3, type: 3}
   _enemySpawnRate: 1.5
   _powerupSpawnRateMin: 7
