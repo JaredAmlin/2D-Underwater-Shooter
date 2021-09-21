@@ -33,6 +33,9 @@ public class Enemy : MonoBehaviour
     //random int variable to roll for if enemy gets a shield
     private int _randomEnemyShield;
 
+    //random int variable for if enemy is smart
+    private int _randomSmartEnemy;
+
     //varibale for enemy ID
     //0 = piranha, 1 = jellyfish, 2 = Red_Piranha, 3 = Blowfish
     [SerializeField] private int _enemyID;
@@ -48,6 +51,9 @@ public class Enemy : MonoBehaviour
 
     //variable for shield game object
     [SerializeField] private GameObject _enemyBubbleShield;
+
+    //variable for star projectile
+    [SerializeField] private GameObject _starProjectile;
 
     //variable for the piranha chompers projectile
     [SerializeField] private GameObject _piranhaChompersPrefab;
@@ -115,6 +121,9 @@ public class Enemy : MonoBehaviour
             //give range of 5 for random shield value
             _randomEnemyShield = Random.Range(0, 5);
 
+            //range to determine if enemy is smart or not. 
+            _randomSmartEnemy = Random.Range(0, 5);
+
             if (_randomEnemyShield == 0)
             {
                 //set the shield game object to active
@@ -122,6 +131,15 @@ public class Enemy : MonoBehaviour
 
                 //set avtive bool to true
                 _isEnemyShieldActive = true;
+            }
+
+            if (_randomSmartEnemy == 0)
+            {
+                //make enemy SMART!!!
+                //change color to yellow if smart
+                _spriteRenderer.color = Color.green;
+                //start firing coroutine
+                StartCoroutine(SmartEnemyFireRoutine());
             }
         }
 
@@ -295,6 +313,25 @@ public class Enemy : MonoBehaviour
             }
 
             yield return new WaitForSeconds(_blowFishFireRate);
+        }
+    }
+
+    IEnumerator SmartEnemyFireRoutine()
+    {
+        while (_isEnemyDead == false)
+        {
+            float _offset = -3f;
+
+            //fire at the player when behind it
+            if (_target != null && this.transform.position.x < (_target.transform.position.x + _offset))
+            {
+                //fire at the player
+                Instantiate(_starProjectile, transform.position, Quaternion.identity);
+
+                yield return new WaitForSeconds(5f);
+            }
+
+            yield return new WaitForSeconds(0.5f);
         }
     }
 

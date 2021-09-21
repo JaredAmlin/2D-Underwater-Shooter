@@ -11,6 +11,35 @@ public class Tusk : MonoBehaviour
 
     private Player _player;
 
+    private Transform _target;
+
+    private Vector3 _direction;
+
+    private void Start()
+    {
+        if (_projectileID == 3)
+        {
+            _player = GameObject.Find("Player").GetComponent<Player>();
+
+            if (_player == null)
+            {
+                Debug.Log("The player target is NULL for the Star projectile");
+            }
+
+            _target = _player.GetComponent<Transform>();
+
+            if (_target == null)
+            {
+                Debug.Log("The Transform on the Player is NULL for the Star Projectile");
+            }
+
+            if (_target != null)
+            {
+                _direction = (_target.position - this.transform.position).normalized;
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -36,6 +65,14 @@ public class Tusk : MonoBehaviour
         else if (_projectileID == 2)
         {
             transform.Translate(Vector3.up * _speed * Time.deltaTime);
+
+            BlowfishSpineBoundaries();
+        }
+
+        else if (_projectileID == 3)
+        {
+            //move towards the location of the player when fired. Not updated or homing. 
+            transform.position += _direction * _speed * Time.deltaTime;
 
             BlowfishSpineBoundaries();
         }
@@ -72,7 +109,7 @@ public class Tusk : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (_projectileID == 1 || _projectileID == 2)
+        if (_projectileID == 1 || _projectileID == 2 || _projectileID == 3)
         {
             if (other.tag == "Player")
             {

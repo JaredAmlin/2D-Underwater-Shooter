@@ -156,7 +156,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 4c190b412aecbdc469bf2568cde3a5e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -181,10 +181,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 3.5
+  _jellyfishThrust: 150
+  _rammingThrust: 300
+  _rotationSpeed: 150
+  _rammingDistance: 5
+  _amplitude: 0
+  _frequency: 0
   _bottomRespawnRange: -5.1
   _topRespawnRange: 5.1
-  _maxEnemyShieldHealth: 1
+  _enemyID: 0
+  _isRamming: 0
   _enemyBubbleShield: {fileID: 1355804902}
+  _starProjectile: {fileID: 8909955137221266763, guid: 1f31fe0e0d70ab546b44d082fcb1aaf7, type: 3}
+  _piranhaChompersPrefab: {fileID: 0}
+  _blowfishSpine: {fileID: 0}
+  _blowfishSpines: 
 --- !u!60 &7060408807984791054
 PolygonCollider2D:
   m_ObjectHideFlags: 0
