@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 352430361880796323}
   - component: {fileID: 352430361880796333}
   - component: {fileID: 352430361880796332}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Bubble_Blaster_Powerup
   m_TagString: Powerup
   m_Icon: {fileID: 0}
@@ -233,6 +233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 2
+  _playerPullSpeed: 5
   _powerupSoundClip: {fileID: 8300000, guid: 745961f771b6e4649964f31422bf2906, type: 3}
   _powerupID: 6
 --- !u!1 &3713254377640304384

@@ -9,11 +9,19 @@ public class Tusk : MonoBehaviour
     //0 = Tusk, 1 = Piranha_Chompers
     [SerializeField] private int _projectileID;
 
+    private bool _hasTargetPowerup = false;
+
     private Player _player;
 
     private Transform _target;
 
+    private Transform _targetPowerup;
+
     private Vector3 _direction;
+
+    private Vector3 _targetPowerupDirection;
+
+    [SerializeField] private LayerMask _powerupLayerMask;
 
     private void Start()
     {
@@ -44,6 +52,15 @@ public class Tusk : MonoBehaviour
     void Update()
     {
         TuskMovement();
+
+        if (_projectileID == 4)
+        {
+            if (_hasTargetPowerup == false)
+            {
+                SpiralProjectileRaycast();
+            }
+        }
+
     }
 
     void TuskMovement()
@@ -76,6 +93,46 @@ public class Tusk : MonoBehaviour
 
             BlowfishSpineBoundaries();
         }
+
+        else if (_projectileID == 4)
+        {
+            if (_hasTargetPowerup == true)
+            {
+                if (_targetPowerup != null)
+                {
+                    //move towards the powerup hit by raycast from the jellyfish
+                    _targetPowerupDirection = (_targetPowerup.position - this.transform.position).normalized;
+                    transform.position += _targetPowerupDirection * _speed * Time.deltaTime;
+                }
+
+                else
+                {
+                    transform.position += _targetPowerupDirection * _speed * Time.deltaTime;
+                }
+            }
+
+            BlowfishSpineBoundaries();
+        }
+    }
+
+    void SpiralProjectileRaycast()
+    {
+        RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.up), 20f, _powerupLayerMask);
+
+        if (hitInfo.collider != null)
+        {
+            if (hitInfo.collider.gameObject.tag == "Powerup")
+            {
+                Debug.Log("The Spiral Shot detected a powerup!");
+
+                _targetPowerup = hitInfo.collider.gameObject.GetComponent<Transform>();
+                Debug.Log($"We hit the {_targetPowerup.name} Powerup");
+            }
+        }
+
+        Debug.DrawRay(transform.position, transform.TransformDirection(Vector2.up) * 20f, Color.yellow);
+
+        _hasTargetPowerup = true;
     }
 
     void TuskBoundaries()
@@ -119,6 +176,18 @@ public class Tusk : MonoBehaviour
                 {
                     _player.Damage();
 
+                    Destroy(this.gameObject);
+                }
+            }
+        }
+
+        else if (_projectileID == 4)
+        {
+            if (other.tag == "Powerup")
+            {
+                if (other != null)
+                {
+                    Destroy(other.gameObject);
                     Destroy(this.gameObject);
                 }
             }

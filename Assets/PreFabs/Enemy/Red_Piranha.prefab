@@ -109,7 +109,9 @@ MonoBehaviour:
   _enemyID: 2
   _isRamming: 0
   _enemyBubbleShield: {fileID: 0}
-  _piranhaChompersPrefab: {fileID: 6766283757362189119, guid: e841f10d6ab937c419f8cda0d02de571, type: 3}
+  _starProjectile: {fileID: 0}
+  _spiralProjectile: {fileID: 0}
+  _piranhaChompers: {fileID: 6766283757362189119, guid: e841f10d6ab937c419f8cda0d02de571, type: 3}
   _blowfishSpine: {fileID: 0}
   _blowfishSpines: 
 --- !u!60 &3817380762332384494

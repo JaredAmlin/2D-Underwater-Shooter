@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 7316152676317379533}
   - component: {fileID: 7316152676317379535}
   - component: {fileID: 1894852761}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Triple_Tusk_Powerup
   m_TagString: Powerup
   m_Icon: {fileID: 0}
@@ -233,6 +233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 2
+  _playerPullSpeed: 5
   _powerupSoundClip: {fileID: 8300000, guid: 745961f771b6e4649964f31422bf2906, type: 3}
   _powerupID: 0
 --- !u!95 &1894852761

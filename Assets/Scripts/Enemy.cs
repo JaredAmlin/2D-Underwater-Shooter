@@ -49,18 +49,27 @@ public class Enemy : MonoBehaviour
     //bool to handle if the enemy is ramming the player
     [SerializeField] private bool _isRamming = false;
 
+    //variable to change when the enemy has fired at the target powerup
+    private bool _hasFiredAtPowerup = false;
+
     //variable for shield game object
     [SerializeField] private GameObject _enemyBubbleShield;
 
     //variable for star projectile
     [SerializeField] private GameObject _starProjectile;
 
+    //variable for spiral projectile
+    [SerializeField] private GameObject _spiralProjectile;
+
     //variable for the piranha chompers projectile
-    [SerializeField] private GameObject _piranhaChompersPrefab;
+    [SerializeField] private GameObject _piranhaChompers;
     //variable to store the Blowfish spine projectile
     [SerializeField] private GameObject _blowfishSpine;
     //variable for Blowfish Spine array
     [SerializeField] private int[] _blowfishSpines;
+
+    //variable for layermask when raycasting for powerups
+    [SerializeField] private LayerMask _powerupLayerMask;
 
     private Rigidbody2D _enemyRB;
     private PolygonCollider2D _enemyCollider;
@@ -186,6 +195,14 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         EnemyMovement();
+
+        if (_enemyID == 1)
+        {
+            if (_hasFiredAtPowerup == false)
+            {
+                JellyfishRaycasting();
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -240,6 +257,35 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    void JellyfishRaycasting()
+    {
+        RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.up), 20f, _powerupLayerMask);
+
+        if (hitInfo.collider != null)
+        {
+            if (hitInfo.collider.gameObject.tag == "Powerup")
+            {
+                Debug.Log("We detected a powerup!");
+                
+                //Transform powerupTransform = hitInfo.transform;
+                //Debug.Log($"We hit the {powerupTransform.name} Powerup");
+                Instantiate(_spiralProjectile, transform.position, transform.rotation);
+                StartCoroutine(JellyfishFireCooldownRoutine());
+            }
+        }
+
+        Debug.DrawRay(transform.position, transform.TransformDirection(Vector2.up) * 20f, Color.yellow);
+    }
+
+    IEnumerator JellyfishFireCooldownRoutine()
+    {
+        _hasFiredAtPowerup = true;
+
+        yield return new WaitForSeconds(5f);
+
+        _hasFiredAtPowerup = false;
+    }
+
     IEnumerator BlowFishSinRoutine()
     {
         while (_isEnemyDead == false)
@@ -281,7 +327,7 @@ public class Enemy : MonoBehaviour
 
             Vector3 _firePoint = new Vector3(-0.9f, 0, 0);
 
-            Instantiate(_piranhaChompersPrefab, this.transform.position + _firePoint, Quaternion.identity);
+            Instantiate(_piranhaChompers, this.transform.position + _firePoint, Quaternion.identity);
 
             yield return new WaitForSeconds(_redPiranhaFireRate);
         }

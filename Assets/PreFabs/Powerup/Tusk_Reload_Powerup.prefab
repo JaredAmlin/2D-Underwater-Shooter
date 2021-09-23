@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7943929318393307170}
   - component: {fileID: 7943929318393307168}
   - component: {fileID: 158563521}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Tusk_Reload_Powerup
   m_TagString: Powerup
   m_Icon: {fileID: 0}
@@ -162,6 +162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 2
+  _playerPullSpeed: 5
   _powerupSoundClip: {fileID: 8300000, guid: 745961f771b6e4649964f31422bf2906, type: 3}
   _powerupID: 4
 --- !u!95 &158563521
