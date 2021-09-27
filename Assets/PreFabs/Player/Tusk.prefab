@@ -97,6 +97,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 10
+  _projectileID: 0
+  _powerupLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!60 &2687710945186664488
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -122,10 +126,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.074999996, y: 0.11}
+    - - {x: -0.069641, y: 0.09392306}
       - {x: -0.385, y: 0.11}
       - {x: -0.385, y: -0.11}
-      - {x: 0.36499998, y: -0.11}
-      - {x: 0.385, y: -0.07}
-      - {x: 0.385, y: 0.049999997}
-      - {x: 0.315, y: 0.08}
+      - {x: 0.29711965, y: -0.0689145}
+      - {x: 0.37964094, y: -0.016410228}
+      - {x: 0.37606835, y: 0.017846137}
+      - {x: 0.29892302, y: 0.058564097}

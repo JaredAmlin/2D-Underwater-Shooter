@@ -1098,7 +1098,9 @@ MonoBehaviour:
   _currentLives: 0
   _maxLives: 3
   _shieldHealth: 0
+  _isTripleTuskActive: 0
   _isBubbleBlasterActive: 0
+  _isHomingTuskActive: 1
   _isPlayerPenaltyActive: 0
   _canThrust: 0
   _isThrusting: 0
@@ -1107,6 +1109,7 @@ MonoBehaviour:
   _tripleTuskPrefab: {fileID: 5368227328803471169, guid: ac04f091e6d51f747b56b5687a9af822, type: 3}
   _bubbleShield: {fileID: 1500840309}
   _bubbleBlasterPrefab: {fileID: 6315868456273074043, guid: f0b9eadab5cd9f94da77526526f0addf, type: 3}
+  _homingTusk: {fileID: 1441541859131193926, guid: 7d76d095e76317a4999904337e2df253, type: 3}
   _damageScarSingle: {fileID: 898997132}
   _damageScarDouble: {fileID: 2055244526}
   _pewPewSoundClip: {fileID: 8300000, guid: 0bae0f3a351ee684a834fa195527f997, type: 3}
@@ -2941,6 +2944,7 @@ MonoBehaviour:
   - {fileID: 7943929318393307175, guid: 71c38de8464499447b3cc9414654a642, type: 3}
   - {fileID: 2137189618582772199, guid: 2a93d9ae2fe36154ab3d10d971acd216, type: 3}
   - {fileID: 352430361880796320, guid: 58faab218e91fda489bc2114e36c4f42, type: 3}
+  - {fileID: 152818906471975539, guid: e0ce04ab18f1587478239a896395e649, type: 3}
   _enemies:
   - {fileID: 7060408807984791048, guid: 9b3b294fa39519944b808587797aab1a, type: 3}
   - {fileID: 7980169970400686687, guid: 1feb8168ead05ff498962e748dd690f6, type: 3}

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4260583064088932830}
   m_Layer: 0
   m_Name: Spiral_Projectile
-  m_TagString: Enemy_Projectile
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -84,7 +84,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 3
+  _rotationSpeed: 150
   _projectileID: 4
+  _hasEnemyTarget: 0
   _powerupLayerMask:
     serializedVersion: 2
     m_Bits: 256

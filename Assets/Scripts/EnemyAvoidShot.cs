@@ -54,7 +54,7 @@ public class EnemyAvoidShot : MonoBehaviour
     {
         if (other.tag == "Tusk")
         {
-            Debug.Log("That was a close one!!!");
+            //Debug.Log("That was a close one!!!");
 
             if (other.transform.position.y > this.transform.position.y)
             {

@@ -15,7 +15,7 @@ public class Powerup : MonoBehaviour
     [SerializeField] private AudioClip _powerupSoundClip;
 
     //ID for Powerups
-    //0 = Triple Tusk, 1 = Flipper Boost, 2 = Bubble Shield, 3 = Health, 4 = Tusk Ammo Reload , 5 = Player Penalty, 6 = Bubble Blaster
+    //0 = Triple Tusk, 1 = Flipper Boost, 2 = Bubble Shield, 3 = Health, 4 = Tusk Ammo Reload , 5 = Player Penalty, 6 = Bubble Blaster, 7 = Homing Tusk
     [SerializeField] private int _powerupID;
 
     // Start is called before the first frame update
@@ -43,7 +43,7 @@ public class Powerup : MonoBehaviour
 
         if (_player != null && _isPlayerPullingPowerups == true)
         {
-            Debug.Log(_isPlayerPullingPowerups);
+            //Debug.Log(_isPlayerPullingPowerups);
 
             transform.position = Vector2.MoveTowards(this.transform.position, _player.transform.position, _playerPullSpeed * Time.deltaTime);
         }
@@ -99,6 +99,9 @@ public class Powerup : MonoBehaviour
                         //call player to start Bubble Blaster method
                         Debug.Log("The Bubble Blaster Powerup collided with the Player");
                         _player.BubbleBlasterActive();
+                        break;
+                    case 7: //new case for homing tusk powerup
+                        _player.HomingTuskActive();
                         break;
                     default:
                         Debug.LogError ("There is no powerup assigned for this case");

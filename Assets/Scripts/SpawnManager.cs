@@ -93,9 +93,10 @@ public class SpawnManager : MonoBehaviour
         //seperate while loop for bubble blaster spawning
         while (_stopSpawning == false)
         {
+            int _randomRarePowerup = Random.Range(6, 8);
             Vector3 _powerupSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
             _bubbleBlasterSpawnRate = Random.Range(_bubbBlasterSpawnRateMin, _bubbleBlasterSpawnRateMax);
-            Instantiate(_powerups[6], _powerupSpawnPosition, Quaternion.identity);
+            Instantiate(_powerups[_randomRarePowerup], _powerupSpawnPosition, Quaternion.identity);
             yield return new WaitForSeconds(_bubbleBlasterSpawnRate);
         }
     }

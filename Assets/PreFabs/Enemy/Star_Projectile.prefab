@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8909955137221266761}
   m_Layer: 0
   m_Name: Star_Projectile
-  m_TagString: Enemy_Projectile
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26,7 +26,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8909955137221266763}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -84,7 +84,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 5
+  _rotationSpeed: 150
   _projectileID: 3
+  _hasEnemyTarget: 0
   _powerupLayerMask:
     serializedVersion: 2
     m_Bits: 0

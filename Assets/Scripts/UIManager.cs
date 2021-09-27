@@ -85,7 +85,7 @@ public class UIManager : MonoBehaviour
         _tuskAmmoText.text = $"Tusks: {currentTuskAmmo}";
 
         float _currentTuskAmmoFillAmount = ((float) currentTuskAmmo) / ((float) _maxPlayerTuskAmmo);
-        Debug.Log(_currentTuskAmmoFillAmount);
+        //Debug.Log(_currentTuskAmmoFillAmount);
 
         _tuskAmmoFillImage.fillAmount = _currentTuskAmmoFillAmount;
     }

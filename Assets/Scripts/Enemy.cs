@@ -93,6 +93,11 @@ public class Enemy : MonoBehaviour
     {
         _enemyRB = GetComponent<Rigidbody2D>();
 
+        if (_enemyRB == null)
+        {
+            Debug.LogError("The enemy Rigidbody is NULL");
+        }
+
         _player = GameObject.Find("Player").GetComponent<Player>();
 
         if (_player == null)
@@ -107,12 +112,6 @@ public class Enemy : MonoBehaviour
         if (_target == null)
         {
             Debug.Log("The Player Transform is NULL");
-        }
-
-        else
-        {
-            //check to see if the get component worked
-            Debug.Log("The player transform is not null");
         }
 
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
@@ -265,7 +264,7 @@ public class Enemy : MonoBehaviour
         {
             if (hitInfo.collider.gameObject.tag == "Powerup")
             {
-                Debug.Log("We detected a powerup!");
+                //Debug.Log("We detected a powerup!");
                 
                 //Transform powerupTransform = hitInfo.transform;
                 //Debug.Log($"We hit the {powerupTransform.name} Powerup");
@@ -494,7 +493,7 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Enemy collided with " + other.transform.name + " at the location of " + other.transform.position);
+        //Debug.Log("Enemy collided with " + other.transform.name + " at the location of " + other.transform.position);
         
         if (other.tag == "Player")
         {

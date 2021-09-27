@@ -6,10 +6,22 @@ public class Tusk : MonoBehaviour
 {
     [SerializeField] private float _speed = 10f;
 
-    //0 = Tusk, 1 = Piranha_Chompers
+    //variable to store distance between projectile and target
+    private float _distance;
+
+    //variable to store closest distance
+    private float _closestDistance = Mathf.Infinity;
+
+    //variable to control homing missile rotation speed
+    [SerializeField] private float _rotationSpeed = 150f;
+
+    //0 = Tusk, 1 = Piranha_Chompers, 2 = Blowfish_Spine, 3 = Star, 4 = Spiral, 5 = Homing_Tusk
     [SerializeField] private int _projectileID;
 
     private bool _hasTargetPowerup = false;
+
+    //variable for if the homing missile has a target
+    [SerializeField] private bool _hasEnemyTarget = false;
 
     private Player _player;
 
@@ -22,6 +34,15 @@ public class Tusk : MonoBehaviour
     private Vector3 _targetPowerupDirection;
 
     [SerializeField] private LayerMask _powerupLayerMask;
+
+    //variable to store enemies in an array
+    private GameObject[] _enemies;
+
+    //variable to store transform of target enemy
+    private Transform _enemyTarget = null;
+
+    //variable for the homing tusk rigidbody
+    private Rigidbody2D _homingTuskRB;
 
     private void Start()
     {
@@ -46,6 +67,18 @@ public class Tusk : MonoBehaviour
                 _direction = (_target.position - this.transform.position).normalized;
             }
         }
+
+        if (_projectileID ==5)
+        {
+            _homingTuskRB = GetComponent<Rigidbody2D>();
+
+            if (_homingTuskRB == null)
+            {
+                Debug.LogError("The Rigidbody on the homing missile is NULL");
+            }
+
+            FindEnemyTargets();
+        }
     }
 
     // Update is called once per frame
@@ -60,7 +93,14 @@ public class Tusk : MonoBehaviour
                 SpiralProjectileRaycast();
             }
         }
+    }
 
+    private void FixedUpdate()
+    {
+        if (_projectileID == 5)
+        {
+            HomingTuskMovement();
+        }
     }
 
     void TuskMovement()
@@ -115,6 +155,34 @@ public class Tusk : MonoBehaviour
         }
     }
 
+    void HomingTuskMovement()
+    {
+        _homingTuskRB.velocity = transform.right * _speed * Time.deltaTime;
+
+        if (_enemyTarget != null)
+        {
+            //homing function
+            Vector2 direction = (Vector2)_enemyTarget.position - _homingTuskRB.position;
+
+            direction.Normalize();
+
+            float rotationAmount = Vector3.Cross(direction, transform.right).z;
+
+            _homingTuskRB.angularVelocity = -rotationAmount * _rotationSpeed;
+
+            _homingTuskRB.velocity = transform.right * _speed * Time.deltaTime;
+        }
+
+        else if (_enemyTarget == null)
+        {
+            _hasEnemyTarget = false;
+            _closestDistance = Mathf.Infinity;
+            FindEnemyTargets();
+        }
+
+        BlowfishSpineBoundaries();
+    }
+
     void SpiralProjectileRaycast()
     {
         RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.up), 20f, _powerupLayerMask);
@@ -123,16 +191,47 @@ public class Tusk : MonoBehaviour
         {
             if (hitInfo.collider.gameObject.tag == "Powerup")
             {
-                Debug.Log("The Spiral Shot detected a powerup!");
+                //Debug.Log("The Spiral Shot detected a powerup!");
 
                 _targetPowerup = hitInfo.collider.gameObject.GetComponent<Transform>();
-                Debug.Log($"We hit the {_targetPowerup.name} Powerup");
+                //Debug.Log($"We hit the {_targetPowerup.name} Powerup");
             }
         }
 
         Debug.DrawRay(transform.position, transform.TransformDirection(Vector2.up) * 20f, Color.yellow);
 
         _hasTargetPowerup = true;
+    }
+
+    void FindEnemyTargets()
+    {
+        if (_hasEnemyTarget == false)
+        {
+            _enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+            foreach (var enemy in _enemies)
+            {
+                //Debug.Log("we detected the " + enemy.name + " enemy type");
+
+                _distance = (enemy.transform.position - this.transform.position).sqrMagnitude;
+                //Debug.Log($"The Homing Tusk detected the {enemy} enemy type, at a distance of {_distance}");
+
+                //compare distances
+                if (_distance < _closestDistance)
+                {
+                    //assign closest distance to the current distance if closer
+                    _closestDistance = _distance;
+                    //Debug.Log("The closest distance is " + _closestDistance + "On the " + enemy.name + "enemy");
+
+                    //set enemy target
+                    _enemyTarget = enemy.transform;
+                    //stop looking for targets after target is found
+                    _hasEnemyTarget = true;
+
+                    Debug.Log("The closest distance is " + _closestDistance + "On the " + _enemyTarget.name + "enemy");
+                }
+            }
+        }
     }
 
     void TuskBoundaries()
@@ -190,6 +289,14 @@ public class Tusk : MonoBehaviour
                     Destroy(other.gameObject);
                     Destroy(this.gameObject);
                 }
+            }
+        }
+
+        else if (_projectileID == 5)
+        {
+            if (other.tag == "Enemy")
+            {
+                Destroy(other.gameObject);
             }
         }
     }

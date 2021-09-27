@@ -64,11 +64,13 @@ public class Player : MonoBehaviour
     private int _minShieldHealth = 0;
 
 
-    private bool _isTripleTuskActive = false;
+    [SerializeField] private bool _isTripleTuskActive = false;
     private bool _isFlipperBoostActive = false;
     private bool _isShieldActive = false;
     //variable for if Bubble Blaster is active
     [SerializeField] private bool _isBubbleBlasterActive = false;
+    //variable for if the homing tusk is active
+    [SerializeField] private bool _isHomingTuskActive = false;
     //variable to switch if out of ammo and powerup is spawned
     private bool _hasSpawnedAmmoReload = false;
 
@@ -91,6 +93,9 @@ public class Player : MonoBehaviour
 
     //game object variable for bubble blaster prefab special weapon
     [SerializeField] private GameObject _bubbleBlasterPrefab;
+
+    //game object variable to store the homing tusk projectile
+    [SerializeField] private GameObject _homingTusk;
 
     //game object variables for player damage visualization
     [SerializeField] private GameObject _damageScarSingle;
@@ -265,10 +270,23 @@ public class Player : MonoBehaviour
             //add condition to fire if ammo count is greater than zero
             if (_isTripleTuskActive == true && _currentTuskAmmo > _minTuskAmmo)
             {
-                Instantiate(_tripleTuskPrefab, transform.position + _firePoint, Quaternion.identity);
+                if (_isHomingTuskActive == false)
+                {
+                    Instantiate(_tripleTuskPrefab, transform.position + _firePoint, Quaternion.identity);
 
-                //play fire sound if ammo available
-                _audioSource.PlayOneShot(_pewPewSoundClip);
+                    //play fire sound if ammo available
+                    _audioSource.PlayOneShot(_pewPewSoundClip);
+                }
+            }
+
+            else if (_isHomingTuskActive == true && _currentTuskAmmo > _minTuskAmmo)
+            {
+                if (_isTripleTuskActive == false)
+                {
+                    Instantiate(_homingTusk, transform.position + _firePoint, Quaternion.identity);
+
+                    _audioSource.PlayOneShot(_pewPewSoundClip);
+                }
             }
 
             //add condition if ammo count is greater than zero
@@ -536,11 +554,35 @@ public class Player : MonoBehaviour
 
     IEnumerator TripleTuskPowerDownRoutine()
     {
+        if (_isHomingTuskActive == true)
+        {
+            _isHomingTuskActive = false;
+        }
+
         _isTripleTuskActive = true;
 
         yield return new WaitForSeconds(5f);
 
         _isTripleTuskActive = false;
+    }
+
+    public void HomingTuskActive()
+    {
+        StartCoroutine(HomingTuskPowerDownRoutine());
+    }
+
+    IEnumerator HomingTuskPowerDownRoutine()
+    {
+        if (_isTripleTuskActive == true)
+        {
+            _isTripleTuskActive = false;
+        }
+
+        _isHomingTuskActive = true;
+
+        yield return new WaitForSeconds(5f);
+
+        _isHomingTuskActive = false;
     }
 
     public void FlipperBoostActive()
