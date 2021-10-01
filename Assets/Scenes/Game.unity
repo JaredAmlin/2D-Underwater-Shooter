@@ -1100,7 +1100,7 @@ MonoBehaviour:
   _shieldHealth: 0
   _isTripleTuskActive: 0
   _isBubbleBlasterActive: 0
-  _isHomingTuskActive: 1
+  _isHomingTuskActive: 0
   _isPlayerPenaltyActive: 0
   _canThrust: 0
   _isThrusting: 0

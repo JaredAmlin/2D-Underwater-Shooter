@@ -171,8 +171,8 @@ public class Player : MonoBehaviour
         _currentSpeed = _minSpeed;
         _defaultSpeed = _minSpeed;
 
-        //set shield health to be max value
-        _shieldHealth = _maxShieldHealth;
+        //set shield health to be zero until powerup is collected
+        _shieldHealth = 0;
 
         //set the lives to be the maximum value
         _currentLives = _maxLives;
@@ -675,6 +675,16 @@ public class Player : MonoBehaviour
     public bool PowerupPullCheck()
     {
         return _isPullingPowerups;
+    }
+
+    public int PlayerLives()
+    {
+        return _currentLives;
+    }
+
+    public int PlayerShield()
+    {
+        return _shieldHealth;
     }
 
     void PlayerHurtAnimation()
