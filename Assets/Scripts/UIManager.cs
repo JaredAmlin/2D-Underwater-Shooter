@@ -22,6 +22,8 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TMP_Text _restartText;
 
+    [SerializeField] private TMP_Text _waveText;
+
     [SerializeField] private Image _livesImage;
     [SerializeField] private Sprite[] _livesSprites;
 
@@ -45,6 +47,9 @@ public class UIManager : MonoBehaviour
     private int _maxPlayerThrust = 100;
     private int _maxPlayerTuskAmmo = 15;
 
+    //variable to store current wave being passed from spawn manager
+    [SerializeField] private int _currentWave;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,6 +62,7 @@ public class UIManager : MonoBehaviour
 
         _gameText.gameObject.SetActive(false);
         _overText.gameObject.SetActive(false);
+        _waveText.gameObject.SetActive(false);
         _playerScore = 0;
     }
 
@@ -143,6 +149,42 @@ public class UIManager : MonoBehaviour
             _thrusterFillImage.color = _minThrusterColor;
             yield return new WaitForSeconds(0.2f);
         }
+    }
+
+    public void UpdateWaveText(int currentWave)
+    {
+        _currentWave = currentWave;
+        StartCoroutine(UpdateWaveTextRoutine());
+    }
+
+    IEnumerator UpdateWaveTextRoutine()
+    {
+        _waveText.text = "Wave  " + _currentWave.ToString();
+
+        _waveText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+
+        _waveText.text = "Ready?";
+        yield return new WaitForSeconds(2f);
+
+        _waveText.text = "GO!";
+        yield return new WaitForSeconds(2f);
+        _waveText.gameObject.SetActive(false);
+    }
+
+    public void WaveCompletedText()
+    {
+        StartCoroutine(WaveCompleteTextRoutine());
+    }
+
+    IEnumerator WaveCompleteTextRoutine()
+    {
+        _waveText.text = $"Wave {_currentWave} Complete!";
+        _waveText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _waveText.text = "Good Job!!!";
+        yield return new WaitForSeconds(2f);
+        _waveText.gameObject.SetActive(false);
     }
 
     public void GameOverText()

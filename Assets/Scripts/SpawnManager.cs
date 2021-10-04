@@ -8,13 +8,19 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private GameObject[] _powerups;
     [SerializeField] private GameObject[] _enemies;
 
-    private bool _stopSpawning = false;
+    //variable for if the spawn manager is spawning
+    [SerializeField] private bool _isSpawning = false;
+
+    [SerializeField] private bool _isWaveTimerComplete = false;
 
     [SerializeField] private float _enemySpawnRate = 1f;
 
     private float _powerupSpawnRate;
     [SerializeField] private float _powerupSpawnRateMin = 7f;
     [SerializeField] private float _powerupSpawnRateMax = 12f;
+
+    //variable for current wave
+    [SerializeField] private int _currentWave = 0;
 
     //range to get chance for ppowerup drops
     private float _powerupRarity;
@@ -55,6 +61,9 @@ public class SpawnManager : MonoBehaviour
 
     private Player _player;
 
+    //variable for the UI Manager
+    [SerializeField] private UIManager _uiManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -65,14 +74,17 @@ public class SpawnManager : MonoBehaviour
             Debug.Log("The Player is NULL");
         }
 
-        StartCoroutine(SpawnEnemyRoutine());
+        if (_uiManager == null)
+        {
+            Debug.LogError("The UI Manager is NULL");
+        }
 
-        StartCoroutine(SpawnPowerupRoutine());
+        SpawnWave();
     }
 
     IEnumerator SpawnEnemyRoutine()
     {
-        while (_stopSpawning == false)
+        while (_isSpawning == true)
         {
             //location for piranhas to spawn
             _piranhaSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
@@ -89,9 +101,68 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    void SpawnWave()
+    {
+        StartCoroutine(SpawnWaveRoutine());
+    }
+
+    IEnumerator SpawnWaveRoutine()
+    {
+        _currentWave++;
+
+        _enemySpawnRate--;
+
+        if (_enemySpawnRate < 1f)
+        {
+            _enemySpawnRate = 1f;
+        }
+
+        if (_currentWave == 3)
+        {
+            //spawn boss fight routine
+            Debug.Log("This is where the Da BOSS comes in!!!");
+        }
+
+        _isSpawning = true;
+
+        //display wave text routine
+        _uiManager.UpdateWaveText(_currentWave);
+
+        yield return new WaitForSeconds(6f);
+
+        StartCoroutine(SpawnEnemyRoutine());
+        StartCoroutine(SpawnPowerupRoutine());
+        yield return new WaitForSeconds(30f);
+
+        _isSpawning = false;
+        _isWaveTimerComplete = true;
+        //check for remaining enemies before moving on
+        StartCoroutine(FindEnemiesRemainingRoutine());
+    }
+
+    IEnumerator FindEnemiesRemainingRoutine()
+    {
+        while (_isWaveTimerComplete == true)
+        {
+            if (GameObject.FindGameObjectWithTag("Enemy") == null)
+            {
+                _isWaveTimerComplete = false;
+                _uiManager.WaveCompletedText();
+
+                yield return new WaitForSeconds(6f);
+                //spawn wave method again
+                SpawnWave();
+
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(2f);
+        }
+    }
+
     IEnumerator SpawnPowerupRoutine()
     {
-        while (_stopSpawning == false)
+        while (_isSpawning == true)
         {
             Vector3 _powerupSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
 
@@ -344,6 +415,6 @@ public class SpawnManager : MonoBehaviour
 
     public void OnPlayerDeath()
     {
-        _stopSpawning = true;
+        _isSpawning = false;
     }
 }
