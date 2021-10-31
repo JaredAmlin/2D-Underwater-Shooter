@@ -97,7 +97,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 10
+  _rotationSpeed: 150
   _projectileID: 0
+  _hasEnemyTarget: 0
   _powerupLayerMask:
     serializedVersion: 2
     m_Bits: 0

@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private int _playerScore;
 
+    private bool _isTutorialComplete = false;
+
     [SerializeField] private TMP_Text _scoreText;
 
     //text variable for my ammo to update
@@ -23,6 +25,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text _restartText;
 
     [SerializeField] private TMP_Text _waveText;
+
+    [SerializeField] private TMP_Text _tutorialText;
 
     [SerializeField] private Image _livesImage;
     [SerializeField] private Sprite[] _livesSprites;
@@ -44,6 +48,8 @@ public class UIManager : MonoBehaviour
 
     private GameManager _gameManager;
 
+    private SpawnManager _spawnManager;
+
     private int _maxPlayerThrust = 100;
     private int _maxPlayerTuskAmmo = 15;
 
@@ -60,10 +66,22 @@ public class UIManager : MonoBehaviour
             Debug.LogError("The Game Manager is NULL");
         }
 
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+
+        if (_spawnManager == null)
+        {
+            Debug.LogError("The Spawn Manager is NULL!");
+        }
+
         _gameText.gameObject.SetActive(false);
         _overText.gameObject.SetActive(false);
         _waveText.gameObject.SetActive(false);
+        _tutorialText.gameObject.SetActive(false);
+
         _playerScore = 0;
+
+        StartCoroutine("TutorialTextRoutine");
+        StartCoroutine(SkipTutorialRoutine());
     }
 
     // Update is called once per frame
@@ -182,9 +200,198 @@ public class UIManager : MonoBehaviour
         _waveText.text = $"Wave {_currentWave} Complete!";
         _waveText.gameObject.SetActive(true);
         yield return new WaitForSeconds(2f);
+
         _waveText.text = "Good Job!!!";
         yield return new WaitForSeconds(2f);
         _waveText.gameObject.SetActive(false);
+
+        if (_currentWave == 3)
+        {
+            yield return new WaitForSeconds(5f);
+            //CONGRATULATIONS!!!
+            _waveText.text = "Congratulations!";
+            _waveText.gameObject.SetActive(true);
+            yield return new WaitForSeconds(2f);
+            _waveText.gameObject.SetActive(false);
+            yield return new WaitForSeconds(0.5f);
+
+            //YOU WIN!
+            _waveText.text = "You win!!!";
+            _waveText.gameObject.SetActive(true);
+            yield return new WaitForSeconds(2f);
+            _waveText.gameObject.SetActive(false);
+            yield return new WaitForSeconds(0.5f);
+
+            _gameManager.GameOver();
+
+            while (true)
+            {
+                //CONGRATULATIONS!!!
+                _waveText.text = "Congratulations!";
+                _waveText.gameObject.SetActive(true);
+                //press r to restart or m for main menu
+                _restartText.gameObject.SetActive(true);
+                yield return new WaitForSeconds(2f);
+                _waveText.gameObject.SetActive(false);
+                yield return new WaitForSeconds(0.5f);
+
+                //YOU WIN!
+                _waveText.text = "You win!!!";
+                _waveText.gameObject.SetActive(true);
+                yield return new WaitForSeconds(2f);
+                _waveText.gameObject.SetActive(false);
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+    }
+
+    IEnumerator TutorialTextRoutine()
+    {
+        yield return new WaitForSeconds(1f);
+        _tutorialText.text = "Hello!!!";
+        _tutorialText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _tutorialText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+
+        _tutorialText.text = "Welcome to the ocean!";
+        _restartText.text = "Press the 'T' key at any time to Skip the Tutorial";
+        _tutorialText.gameObject.SetActive(true);
+        _restartText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _tutorialText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+
+        _tutorialText.text = "Press the Escape Key at any time to quit the game!";
+        _tutorialText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(5f);
+        _tutorialText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+
+        _tutorialText.text = "Press the Arrow Keys or 'A,W,S,D'  to move the Player";
+        _tutorialText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(5f);
+        _tutorialText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+
+        _tutorialText.text = "Press the 'Left Shift' Key to use the Flipper Boost";
+        _tutorialText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(5f);
+        _tutorialText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+
+        _tutorialText.text = "Press the 'space bar' to fire weapons";
+        _tutorialText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(5f);
+        _tutorialText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+
+        _spawnManager.PlayerOutOfAmmo();
+
+        _tutorialText.text = "Hold the 'C' key to pull powerups toward the player";
+        _tutorialText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(5f);
+        _tutorialText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+
+        _tutorialText.text = "Have Fun!";
+        _tutorialText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _tutorialText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+
+        _tutorialText.text = "Good Luck!!!";
+        _tutorialText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _tutorialText.gameObject.SetActive(false);
+        _restartText.gameObject.SetActive(false);
+        _restartText.text = "Press the 'R' key to try again!";
+
+        _isTutorialComplete = true;
+
+        yield return new WaitForSeconds(1f);
+
+        _spawnManager.SpawnWave();
+
+        yield return null;
+    }
+
+    IEnumerator SkipTutorialRoutine()
+    {
+        while (_isTutorialComplete == false)
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                _isTutorialComplete = true;
+                _tutorialText.gameObject.SetActive(false);
+                _restartText.gameObject.SetActive(false);
+                _restartText.text = "Press the 'R' key to try again!";
+                StopCoroutine("TutorialTextRoutine");
+
+                yield return new WaitForSeconds(1f);
+
+                _spawnManager.SpawnWave();
+            }
+
+            yield return null;
+        }
+    }
+
+    public void BossApproachingText()
+    {
+        StartCoroutine(BossApproachingTextRoutine());
+    }
+
+    IEnumerator BossApproachingTextRoutine()
+    {
+        yield return new WaitForSeconds(2f);
+        _waveText.color = Color.red;
+        _waveText.text = "Warning!";
+        _waveText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _waveText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        _waveText.text = "Boss approaching";
+        _waveText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _waveText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        _waveText.text = "Warning!";
+        _waveText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _waveText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        _waveText.text = "Boss approaching";
+        _waveText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _waveText.gameObject.SetActive(false);
+        _waveText.color = Color.white;
+    }
+
+    public void BossFightText()
+    {
+        StartCoroutine(BossFightTextRoutine());
+    }
+
+    IEnumerator BossFightTextRoutine()
+    {
+        yield return new WaitForSeconds(2f);
+        _waveText.text = "Ready?";
+        _waveText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _waveText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        _waveText.text = "Set!";
+        _waveText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _waveText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        _waveText.color = Color.red;
+        _waveText.text = "Fight!!!";
+        _waveText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _waveText.gameObject.SetActive(false);
+        _waveText.color = Color.white;
     }
 
     public void GameOverText()

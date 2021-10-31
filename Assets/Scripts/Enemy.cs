@@ -68,6 +68,8 @@ public class Enemy : MonoBehaviour
     //variable for Blowfish Spine array
     [SerializeField] private int[] _blowfishSpines;
 
+    [SerializeField] private GameObject _deadEnemy;
+
     //variable for layermask when raycasting for powerups
     [SerializeField] private LayerMask _powerupLayerMask;
 
@@ -453,42 +455,49 @@ public class Enemy : MonoBehaviour
 
     void EnemyOnDeathBehavior()
     {
-        if (_enemyID == 0)
-        {
-            _isEnemyDead = true;
-            _enemyCollider.enabled = false;
-            _spriteRenderer.color = Color.blue;
-            _spriteRenderer.flipY = true;
-            _enemyRB.gravityScale = 1f;
-        }
+        //varibale for enemy ID
+        //0 = piranha, 1 = jellyfish, 2 = Red_Piranha, 3 = Blowfish
 
-        else if (_enemyID == 1)
-        {
-            _isEnemyDead = true;
-            Destroy(this.gameObject);
-        }
+        Instantiate(_deadEnemy, transform.position, Quaternion.identity);
 
-        else if (_enemyID == 2)
-        {
-            CircleCollider2D _parentCollider = this.GetComponentInParent<CircleCollider2D>();
+        Destroy(this.gameObject);
 
-            Destroy(_parentCollider);
+        //if (_enemyID == 0)
+        //{
+        //    _isEnemyDead = true;
+        //    _enemyCollider.enabled = false;
+        //    _spriteRenderer.color = Color.blue;
+        //    _spriteRenderer.flipY = true;
+        //    _enemyRB.gravityScale = 1f;
+        //}
 
-            _isEnemyDead = true;
-            _enemyCollider.enabled = false;
-            _spriteRenderer.color = Color.blue;
-            _spriteRenderer.flipY = true;
-            _enemyRB.gravityScale = 1f;
-        }
+        //else if (_enemyID == 1)
+        //{
+        //    _isEnemyDead = true;
+        //    Destroy(this.gameObject);
+        //}
 
-        else if (_enemyID == 3)
-        {
-            _isEnemyDead = true;
-            _blowfishCollider.enabled = false;
-            _spriteRenderer.color = Color.blue;
-            _spriteRenderer.flipY = true;
-            _enemyRB.gravityScale = 1f;
-        }
+        //else if (_enemyID == 2)
+        //{
+        //    CircleCollider2D _parentCollider = this.GetComponentInParent<CircleCollider2D>();
+
+        //    Destroy(_parentCollider);
+
+        //    _isEnemyDead = true;
+        //    _enemyCollider.enabled = false;
+        //    _spriteRenderer.color = Color.blue;
+        //    _spriteRenderer.flipY = true;
+        //    _enemyRB.gravityScale = 1f;
+        //}
+
+        //else if (_enemyID == 3)
+        //{
+        //    _isEnemyDead = true;
+        //    _blowfishCollider.enabled = false;
+        //    _spriteRenderer.color = Color.blue;
+        //    _spriteRenderer.flipY = true;
+        //    _enemyRB.gravityScale = 1f;
+        //}
     }
 
     private void OnTriggerEnter2D(Collider2D other)

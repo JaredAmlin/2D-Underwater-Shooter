@@ -114,6 +114,10 @@ MonoBehaviour:
   _piranhaChompers: {fileID: 6766283757362189119, guid: e841f10d6ab937c419f8cda0d02de571, type: 3}
   _blowfishSpine: {fileID: 0}
   _blowfishSpines: 
+  _deadEnemy: {fileID: 3502894786811618220, guid: bf3e991610de95c46862ec87315cd124, type: 3}
+  _powerupLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!60 &3817380762332384494
 PolygonCollider2D:
   m_ObjectHideFlags: 0

@@ -9,6 +9,10 @@ TagManager:
   - Powerup
   - Bubble_Blaster
   - Enemy_Projectile
+  - AnglerFish
+  - AnglerTarget
+  - AnglerLight
+  - HealthBar
   layers:
   - Default
   - TransparentFX

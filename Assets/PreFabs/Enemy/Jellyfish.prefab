@@ -171,6 +171,7 @@ MonoBehaviour:
   _piranhaChompers: {fileID: 0}
   _blowfishSpine: {fileID: 0}
   _blowfishSpines: 
+  _deadEnemy: {fileID: 304401317712338226, guid: c215696fef84fa64bac3e268db976236, type: 3}
   _powerupLayerMask:
     serializedVersion: 2
     m_Bits: 256

@@ -231,6 +231,34 @@ public class Tusk : MonoBehaviour
                     Debug.Log("The closest distance is " + _closestDistance + "On the " + _enemyTarget.name + "enemy");
                 }
             }
+
+            if (_enemyTarget == null)
+            {
+                GameObject anglerLight = GameObject.FindGameObjectWithTag("AnglerLight");
+
+                if (anglerLight != null)
+                {
+                    anglerLight.GetComponent<GameObject>();
+
+                    Transform anglerTarget = GameObject.FindGameObjectWithTag("AnglerTarget").GetComponent<Transform>();
+
+                    AnglerfishLight anglerfishLight = anglerLight.GetComponent<AnglerfishLight>();
+
+                    bool isJawOpen = anglerfishLight.IsJawOpen();
+
+                    if (isJawOpen == false)
+                    {
+                        _hasEnemyTarget = true;
+                        _enemyTarget = anglerLight.transform;
+                    }
+
+                    else if (isJawOpen == true)
+                    {
+                        _hasEnemyTarget = true;
+                        _enemyTarget = anglerTarget;
+                    }
+                }
+            }
         }
     }
 
@@ -294,9 +322,86 @@ public class Tusk : MonoBehaviour
 
         else if (_projectileID == 5)
         {
-            if (other.tag == "Enemy")
+            //if (other.tag == "Enemy")
+            //{
+            //    Destroy(other.gameObject);
+            //}
+
+            if (other.tag == "AnglerLight")
             {
-                Destroy(other.gameObject);
+                Debug.Log("The TUSK hit the Anglerfish LIGHT");
+
+                AnglerfishLight anglerLight = other.transform.GetComponent<AnglerfishLight>();
+
+                if (anglerLight != null)
+                {
+                    //call damage method on light
+                    anglerLight.AnglerfishLightDamage();
+                }
+
+                Destroy(this.gameObject);
+            }
+
+            else if (other.tag == "AnglerTarget")
+            {
+                Debug.Log("The TUSK hit the Anglerfish TARGET");
+
+                AnglerfishTarget anglerTarget = other.transform.GetComponent<AnglerfishTarget>();
+
+                if (anglerTarget != null)
+                {
+                    //call damage method on anglerFish
+                    anglerTarget.AnglerfishTargetDamage(10);
+                }
+                //send message to damage the Anglerfish
+                Destroy(this.gameObject);
+            }
+
+            else if (other.tag == "AnglerFish")
+            {
+                Debug.Log("The TUSK hit the Anglerfish BODY or JAW");
+                //play some dull thud sound
+                Destroy(this.gameObject);
+            }
+        }
+
+        else if (_projectileID == 0)
+        {
+            if (other.tag == "AnglerLight")
+            { 
+                Debug.Log("The TUSK hit the Anglerfish LIGHT");
+
+                AnglerfishLight anglerLight = other.transform.GetComponent<AnglerfishLight>();
+
+                if (anglerLight != null)
+                {
+                    //call damage method on light
+                    anglerLight.AnglerfishLightDamage();
+                }
+                
+                Destroy(this.gameObject);
+            }
+
+            else if (other.tag == "AnglerTarget")
+            {
+                Debug.Log("The TUSK hit the Anglerfish TARGET");
+
+                AnglerfishTarget anglerTarget = other.transform.GetComponent<AnglerfishTarget>();
+
+                if (anglerTarget != null)
+                {
+                    //call damage method on anglerFish
+                    anglerTarget.AnglerfishTargetDamage(5);
+                }
+                //send message to damage the Anglerfish
+                Destroy(this.gameObject);
+            }
+
+            else if (other.tag == "AnglerFish")
+            {
+                Debug.Log("The TUSK hit the Anglerfish BODY or JAW");
+                //play some dull thud sound
+                Destroy(this.gameObject);
             }
         }
     }

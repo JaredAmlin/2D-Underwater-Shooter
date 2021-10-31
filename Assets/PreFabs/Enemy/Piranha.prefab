@@ -193,9 +193,14 @@ MonoBehaviour:
   _isRamming: 0
   _enemyBubbleShield: {fileID: 1355804902}
   _starProjectile: {fileID: 8909955137221266763, guid: 1f31fe0e0d70ab546b44d082fcb1aaf7, type: 3}
-  _piranhaChompersPrefab: {fileID: 0}
+  _spiralProjectile: {fileID: 0}
+  _piranhaChompers: {fileID: 0}
   _blowfishSpine: {fileID: 0}
   _blowfishSpines: 
+  _deadEnemy: {fileID: 2471317127482812055, guid: de8dc61905d9e394baf6e2e39f775af2, type: 3}
+  _powerupLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!60 &7060408807984791054
 PolygonCollider2D:
   m_ObjectHideFlags: 0

@@ -7,9 +7,11 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private GameObject _enemyContainer;
     [SerializeField] private GameObject[] _powerups;
     [SerializeField] private GameObject[] _enemies;
+    [SerializeField] private GameObject _anglerfish;
 
     //variable for if the spawn manager is spawning
-    [SerializeField] private bool _isSpawning = false;
+    [SerializeField] private bool _isSpawningEnemies = false;
+    [SerializeField] private bool _isSpawningPowerups = false;
 
     [SerializeField] private bool _isWaveTimerComplete = false;
 
@@ -59,6 +61,8 @@ public class SpawnManager : MonoBehaviour
     //assignable enemySpawnPosition
     Vector3 _enemySpawnPosition;
 
+    Vector3 _anglerfishSpawnPosition = new Vector3(20f, 0, 0);
+
     private Player _player;
 
     //variable for the UI Manager
@@ -79,12 +83,12 @@ public class SpawnManager : MonoBehaviour
             Debug.LogError("The UI Manager is NULL");
         }
 
-        SpawnWave();
+        //SpawnWave();
     }
 
     IEnumerator SpawnEnemyRoutine()
     {
-        while (_isSpawning == true)
+        while (_isSpawningEnemies == true)
         {
             //location for piranhas to spawn
             _piranhaSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
@@ -101,7 +105,7 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    void SpawnWave()
+    public void SpawnWave()
     {
         StartCoroutine(SpawnWaveRoutine());
     }
@@ -117,13 +121,8 @@ public class SpawnManager : MonoBehaviour
             _enemySpawnRate = 1f;
         }
 
-        if (_currentWave == 3)
-        {
-            //spawn boss fight routine
-            Debug.Log("This is where the Da BOSS comes in!!!");
-        }
-
-        _isSpawning = true;
+        _isSpawningEnemies = true;
+        _isSpawningPowerups = true;
 
         //display wave text routine
         _uiManager.UpdateWaveText(_currentWave);
@@ -134,7 +133,8 @@ public class SpawnManager : MonoBehaviour
         StartCoroutine(SpawnPowerupRoutine());
         yield return new WaitForSeconds(30f);
 
-        _isSpawning = false;
+        _isSpawningEnemies = false;
+        _isSpawningPowerups = false;
         _isWaveTimerComplete = true;
         //check for remaining enemies before moving on
         StartCoroutine(FindEnemiesRemainingRoutine());
@@ -144,25 +144,47 @@ public class SpawnManager : MonoBehaviour
     {
         while (_isWaveTimerComplete == true)
         {
-            if (GameObject.FindGameObjectWithTag("Enemy") == null)
+            if (_currentWave != 3)
             {
-                _isWaveTimerComplete = false;
-                _uiManager.WaveCompletedText();
+                if (GameObject.FindGameObjectWithTag("Enemy") == null)
+                {
+                    _isWaveTimerComplete = false;
+                    _uiManager.WaveCompletedText();
 
-                yield return new WaitForSeconds(6f);
-                //spawn wave method again
-                SpawnWave();
+                    yield return new WaitForSeconds(6f);
+                    //spawn wave method again
+                    SpawnWave();
 
-                yield return null;
+                    yield return null;
+                }
+            }
+
+            else if (_currentWave == 3)
+            {
+                if (GameObject.FindGameObjectWithTag("Enemy") == null)
+                {
+                    _isWaveTimerComplete = false;
+                    //spawn boss fight routine
+                    Debug.Log("This is where the Da BOSS comes in!!!");
+                    Instantiate(_anglerfish, _anglerfishSpawnPosition, Quaternion.identity);
+
+                    yield return null;
+                }
             }
 
             yield return new WaitForSeconds(2f);
         }
     }
 
+    public void SpawnPowerups()
+    {
+        _isSpawningPowerups = true;
+        StartCoroutine(SpawnPowerupRoutine());
+    }
+
     IEnumerator SpawnPowerupRoutine()
     {
-        while (_isSpawning == true)
+        while (_isSpawningPowerups == true)
         {
             Vector3 _powerupSpawnPosition = new Vector3(11.5f, Random.Range(-5.1f, 5.1f), 0);
 
@@ -415,6 +437,7 @@ public class SpawnManager : MonoBehaviour
 
     public void OnPlayerDeath()
     {
-        _isSpawning = false;
+        _isSpawningEnemies = false;
+        _isSpawningPowerups = false;
     }
 }
