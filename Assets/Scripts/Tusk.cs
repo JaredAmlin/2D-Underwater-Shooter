@@ -6,13 +6,9 @@ public class Tusk : MonoBehaviour
 {
     [SerializeField] private float _speed = 10f;
 
-    //variable to store distance between projectile and target
     private float _distance;
-
-    //variable to store closest distance
     private float _closestDistance = Mathf.Infinity;
 
-    //variable to control homing missile rotation speed
     [SerializeField] private float _rotationSpeed = 150f;
 
     //0 = Tusk, 1 = Piranha_Chompers, 2 = Blowfish_Spine, 3 = Star, 4 = Spiral, 5 = Homing_Tusk
@@ -20,7 +16,6 @@ public class Tusk : MonoBehaviour
 
     private bool _hasTargetPowerup = false;
 
-    //variable for if the homing missile has a target
     [SerializeField] private bool _hasEnemyTarget = false;
 
     private Player _player;
@@ -35,13 +30,10 @@ public class Tusk : MonoBehaviour
 
     [SerializeField] private LayerMask _powerupLayerMask;
 
-    //variable to store enemies in an array
     private GameObject[] _enemies;
 
-    //variable to store transform of target enemy
     private Transform _enemyTarget = null;
 
-    //variable for the homing tusk rigidbody
     private Rigidbody2D _homingTuskRB;
 
     private void Start()
@@ -128,7 +120,6 @@ public class Tusk : MonoBehaviour
 
         else if (_projectileID == 3)
         {
-            //move towards the location of the player when fired. Not updated or homing. 
             transform.position += _direction * _speed * Time.deltaTime;
 
             BlowfishSpineBoundaries();
@@ -140,7 +131,6 @@ public class Tusk : MonoBehaviour
             {
                 if (_targetPowerup != null)
                 {
-                    //move towards the powerup hit by raycast from the jellyfish
                     _targetPowerupDirection = (_targetPowerup.position - this.transform.position).normalized;
                     transform.position += _targetPowerupDirection * _speed * Time.deltaTime;
                 }
@@ -161,7 +151,6 @@ public class Tusk : MonoBehaviour
 
         if (_enemyTarget != null)
         {
-            //homing function
             Vector2 direction = (Vector2)_enemyTarget.position - _homingTuskRB.position;
 
             direction.Normalize();
@@ -191,10 +180,7 @@ public class Tusk : MonoBehaviour
         {
             if (hitInfo.collider.gameObject.tag == "Powerup")
             {
-                //Debug.Log("The Spiral Shot detected a powerup!");
-
                 _targetPowerup = hitInfo.collider.gameObject.GetComponent<Transform>();
-                //Debug.Log($"We hit the {_targetPowerup.name} Powerup");
             }
         }
 
@@ -211,24 +197,15 @@ public class Tusk : MonoBehaviour
 
             foreach (var enemy in _enemies)
             {
-                //Debug.Log("we detected the " + enemy.name + " enemy type");
-
                 _distance = (enemy.transform.position - this.transform.position).sqrMagnitude;
-                //Debug.Log($"The Homing Tusk detected the {enemy} enemy type, at a distance of {_distance}");
-
-                //compare distances
+              
                 if (_distance < _closestDistance)
                 {
-                    //assign closest distance to the current distance if closer
                     _closestDistance = _distance;
-                    //Debug.Log("The closest distance is " + _closestDistance + "On the " + enemy.name + "enemy");
-
-                    //set enemy target
+                   
                     _enemyTarget = enemy.transform;
-                    //stop looking for targets after target is found
-                    _hasEnemyTarget = true;
-
-                    Debug.Log("The closest distance is " + _closestDistance + "On the " + _enemyTarget.name + "enemy");
+                   
+                    _hasEnemyTarget = true;                   
                 }
             }
 
@@ -295,7 +272,7 @@ public class Tusk : MonoBehaviour
     {
         if (_projectileID == 1 || _projectileID == 2 || _projectileID == 3)
         {
-            if (other.tag == "Player")
+            if (other.CompareTag("Player"))
             {
                 _player = other.transform.GetComponent<Player>();
 
@@ -310,7 +287,7 @@ public class Tusk : MonoBehaviour
 
         else if (_projectileID == 4)
         {
-            if (other.tag == "Powerup")
+            if (other.CompareTag("Powerup"))
             {
                 if (other != null)
                 {
@@ -322,45 +299,32 @@ public class Tusk : MonoBehaviour
 
         else if (_projectileID == 5)
         {
-            //if (other.tag == "Enemy")
-            //{
-            //    Destroy(other.gameObject);
-            //}
-
-            if (other.tag == "AnglerLight")
+            if (other.CompareTag("AnglerLight"))
             {
-                Debug.Log("The TUSK hit the Anglerfish LIGHT");
-
                 AnglerfishLight anglerLight = other.transform.GetComponent<AnglerfishLight>();
 
                 if (anglerLight != null)
                 {
-                    //call damage method on light
                     anglerLight.AnglerfishLightDamage();
                 }
 
                 Destroy(this.gameObject);
             }
 
-            else if (other.tag == "AnglerTarget")
+            else if (other.CompareTag("AnglerTarget"))
             {
-                Debug.Log("The TUSK hit the Anglerfish TARGET");
-
                 AnglerfishTarget anglerTarget = other.transform.GetComponent<AnglerfishTarget>();
 
                 if (anglerTarget != null)
                 {
-                    //call damage method on anglerFish
                     anglerTarget.AnglerfishTargetDamage(10);
                 }
-                //send message to damage the Anglerfish
+                
                 Destroy(this.gameObject);
             }
 
-            else if (other.tag == "AnglerFish")
+            else if (other.CompareTag("AnglerFish"))
             {
-                Debug.Log("The TUSK hit the Anglerfish BODY or JAW");
-                //play some dull thud sound
                 Destroy(this.gameObject);
             }
         }
@@ -369,38 +333,30 @@ public class Tusk : MonoBehaviour
         {
             if (other.tag == "AnglerLight")
             { 
-                Debug.Log("The TUSK hit the Anglerfish LIGHT");
-
                 AnglerfishLight anglerLight = other.transform.GetComponent<AnglerfishLight>();
 
                 if (anglerLight != null)
-                {
-                    //call damage method on light
+                {                  
                     anglerLight.AnglerfishLightDamage();
                 }
                 
                 Destroy(this.gameObject);
             }
 
-            else if (other.tag == "AnglerTarget")
+            else if (other.CompareTag("AnglerTarget"))
             {
-                Debug.Log("The TUSK hit the Anglerfish TARGET");
-
                 AnglerfishTarget anglerTarget = other.transform.GetComponent<AnglerfishTarget>();
 
                 if (anglerTarget != null)
                 {
-                    //call damage method on anglerFish
                     anglerTarget.AnglerfishTargetDamage(5);
                 }
-                //send message to damage the Anglerfish
+               
                 Destroy(this.gameObject);
             }
 
-            else if (other.tag == "AnglerFish")
+            else if (other.CompareTag("AnglerFish"))
             {
-                Debug.Log("The TUSK hit the Anglerfish BODY or JAW");
-                //play some dull thud sound
                 Destroy(this.gameObject);
             }
         }

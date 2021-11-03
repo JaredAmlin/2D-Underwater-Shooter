@@ -31,6 +31,10 @@ public class Anglerfish : MonoBehaviour
 
     private Animator _anglerJawAnim;
 
+    private WaitForSeconds _waitForTwoSeconds;
+
+    private WaitForSeconds _waitForOneSecond;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -71,6 +75,10 @@ public class Anglerfish : MonoBehaviour
             }
         }
 
+        _waitForTwoSeconds = new WaitForSeconds(2f);
+
+        _waitForOneSecond = new WaitForSeconds(1f);
+
         _currentSpeed = _battleSpeed;
 
         StartCoroutine(EntranceRoutine());
@@ -90,7 +98,7 @@ public class Anglerfish : MonoBehaviour
 
                 _uiManager.BossFightText();
 
-                yield return new WaitForSeconds(2f);
+                yield return _waitForTwoSeconds;
 
                 StartCoroutine(BattleReadyRoutine());
             }
@@ -103,25 +111,21 @@ public class Anglerfish : MonoBehaviour
     {
         while (_isBattleReady == false)
         {
-            //move towards battle position
             transform.position = Vector3.MoveTowards(transform.position, _battlePosition, (_cruisingSpeed * Time.deltaTime));
 
             if (transform.position == _battlePosition)
             {
                 _isBattleReady = true;
-                Debug.Log("Let's do this!!!");
 
-                yield return new WaitForSeconds(2f);
+                yield return _waitForTwoSeconds;
                 
-                //make random next position
                 float randomX = Random.Range(2f, 11f);
                 float randomY = Random.Range(-2f, 2f);
 
                 _nextPosition = new Vector3(randomX, randomY, 0);
 
                 _hasNextPosition = true;
-
-                //start battle movement. 
+ 
                 StartCoroutine(BattleMovementRoutine());
                 _spawnManager.SpawnPowerups();
 
@@ -136,16 +140,12 @@ public class Anglerfish : MonoBehaviour
     {
         while (_hasNextPosition == true && _isRamming == false)
         {
-            //Debug.Log("The next position for the boss is " + _nextPosition);
-            //move towards next position
             transform.position = Vector3.MoveTowards(transform.position, _nextPosition, (_currentSpeed * Time.deltaTime));
 
-            //repeat if next position is met.
             if (transform.position == _nextPosition)
             {
                 _hasNextPosition = false;
 
-                //make random next position
                 float randomX = Random.Range(2f, 11f);
                 float randomY = Random.Range(-2f, 2f);
 
@@ -162,7 +162,7 @@ public class Anglerfish : MonoBehaviour
     {
         _anglerJawAnim.SetBool("IsChomping", true);
 
-        yield return new WaitForSeconds(1f);
+        yield return _waitForOneSecond;
 
         while (_isRamming == true)
         {
@@ -184,7 +184,6 @@ public class Anglerfish : MonoBehaviour
 
     public void RammingAnglerfish()
     {
-        //use this for anglerfish ramming behavior
         _isRamming = true;
 
         StartCoroutine(RammingRoutine());
@@ -213,7 +212,6 @@ public class Anglerfish : MonoBehaviour
 
         _spawnManager.OnPlayerDeath();
 
-        //start game over you WIN behavior!
         _uiManager.WaveCompletedText();
 
         Destroy(this.gameObject);
@@ -221,10 +219,8 @@ public class Anglerfish : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
         {
-            Debug.Log("the Player ran into the Anglerfish");
-
             if (_player != null)
             {
                 _player.Damage();

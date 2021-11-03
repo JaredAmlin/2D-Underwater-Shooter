@@ -5,77 +5,52 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed = 2.5f;
-    //varible for thrust for jellyfish
     [SerializeField] private float _jellyfishThrust = 150f;
-    //variable for higher thrust amount for ramming the player
     [SerializeField] private float _rammingThrust = 300f;
-    //variable for reassignable thrust amount
     private float _currentThrust;
-    //speed for rotation in radians per second
     [SerializeField] private float _rotationSpeed = 150f;
-    //variable for distance value, to ram the player or not
     [SerializeField] private float _rammingDistance = 5f;
 
-    //variable for sin amplidute: Blowfish
     [SerializeField] private float _amplitude;
-    //variable for sin frequency: Blowfish
     [SerializeField] private float _frequency;
 
     private float _startPositionY;
 
     private float _redPiranhaFireRate;
-
     private float _blowFishFireRate;
 
     [SerializeField] private float _bottomRespawnRange = -5.1f;
     [SerializeField] private float _topRespawnRange = 5.1f;
 
-    //random int variable to roll for if enemy gets a shield
     private int _randomEnemyShield;
 
-    //random int variable for if enemy is smart
     private int _randomSmartEnemy;
 
-    //varibale for enemy ID
     //0 = piranha, 1 = jellyfish, 2 = Red_Piranha, 3 = Blowfish
     [SerializeField] private int _enemyID;
 
-    //bool for if the shield is active
     private bool _isEnemyShieldActive = false;
 
-    //bool for if the enemy is dead
     private bool _isEnemyDead = false;
 
-    //bool to handle if the enemy is ramming the player
     [SerializeField] private bool _isRamming = false;
 
-    //variable to change when the enemy has fired at the target powerup
     private bool _hasFiredAtPowerup = false;
 
-    //variable for shield game object
     [SerializeField] private GameObject _enemyBubbleShield;
-
-    //variable for star projectile
     [SerializeField] private GameObject _starProjectile;
-
-    //variable for spiral projectile
     [SerializeField] private GameObject _spiralProjectile;
-
-    //variable for the piranha chompers projectile
     [SerializeField] private GameObject _piranhaChompers;
-    //variable to store the Blowfish spine projectile
     [SerializeField] private GameObject _blowfishSpine;
-    //variable for Blowfish Spine array
+ 
     [SerializeField] private int[] _blowfishSpines;
 
     [SerializeField] private GameObject _deadEnemy;
 
-    //variable for layermask when raycasting for powerups
     [SerializeField] private LayerMask _powerupLayerMask;
 
     private Rigidbody2D _enemyRB;
     private PolygonCollider2D _enemyCollider;
-    //variable for capsule collider: Blowfish
     private CapsuleCollider2D _blowfishCollider;
 
     private SpriteRenderer _spriteRenderer;
@@ -84,10 +59,8 @@ public class Enemy : MonoBehaviour
 
     private Player _player;
 
-    //variable for animator: Blowfish
     private Animator _animator;
 
-    //target varible for the player transform
     private Transform _target;
 
     // Start is called before the first frame update
@@ -107,10 +80,8 @@ public class Enemy : MonoBehaviour
             Debug.Log("The Player is NULL");
         }
 
-        //get handle to player transform
         _target = _player.GetComponent<Transform>();
 
-        //null check the player transform
         if (_target == null)
         {
             Debug.Log("The Player Transform is NULL");
@@ -125,30 +96,22 @@ public class Enemy : MonoBehaviour
 
         if (_enemyID == 0)
         {
-            _enemyCollider = GetComponent<PolygonCollider2D>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
             
-            //give range of 5 for random shield value
             _randomEnemyShield = Random.Range(0, 5);
 
-            //range to determine if enemy is smart or not. 
             _randomSmartEnemy = Random.Range(0, 5);
 
             if (_randomEnemyShield == 0)
             {
-                //set the shield game object to active
                 _enemyBubbleShield.SetActive(true);
-
-                //set avtive bool to true
                 _isEnemyShieldActive = true;
             }
 
             if (_randomSmartEnemy == 0)
             {
-                //make enemy SMART!!!
-                //change color to yellow if smart
                 _spriteRenderer.color = Color.green;
-                //start firing coroutine
+
                 StartCoroutine(SmartEnemyFireRoutine());
             }
         }
@@ -160,34 +123,24 @@ public class Enemy : MonoBehaviour
 
         else if (_enemyID == 2)
         {
-            _enemyCollider = GetComponent<PolygonCollider2D>();
-            _spriteRenderer = GetComponent<SpriteRenderer>();
-
             _redPiranhaFireRate = Random.Range(2f, 5f);
-            //start firing coroutine
             StartCoroutine(RedPiranhaFireRoutine());
-            Debug.Log("started firing coroutine for red");
         }
 
         else if (_enemyID == 3)
         {
-            _blowfishCollider = GetComponent<CapsuleCollider2D>();
-            _spriteRenderer = GetComponent<SpriteRenderer>();
-            
-            //get component the animator
             _animator = GetComponent<Animator>();
             
-            //check the animator
             if (_animator == null)
             {
                 Debug.LogError("The Animator on the Blowfish is NULL");
             }
+
             _amplitude = Random.Range(1f, 2.5f);
             _frequency = Random.Range(1f, 2.5f);
             _startPositionY = transform.position.y;
             _blowFishFireRate = Random.Range(2f, 7f);
             StartCoroutine(BlowFishSinRoutine());
-            //start firing coroutine for the blowfish
             StartCoroutine(BlowfishFireRoutine());
         }
     }
@@ -213,7 +166,6 @@ public class Enemy : MonoBehaviour
 
     void EnemyMovement()
     {
-        //make movement for piranha only
         if (_enemyID == 0 || _enemyID == 3)
         {
             transform.Translate(Vector3.left * _speed * Time.deltaTime);
@@ -222,8 +174,6 @@ public class Enemy : MonoBehaviour
 
         else if (_enemyID == 1)
         {
-            
-            //check to see if the player target is closer than or equal to the ramming distance. 
             if (_target != null && Vector2.Distance(this.transform.position, _target.transform.position) <= _rammingDistance)
             {
                 _isRamming = true;
@@ -245,7 +195,6 @@ public class Enemy : MonoBehaviour
 
     void RammingJellyfish()
     {
-        //null check the player to avoid missing reference error if player becomes NULL
         if (_target != null && _isRamming == true)
         {   
             Vector2 direction = (Vector2)_target.position - _enemyRB.position;
@@ -266,16 +215,12 @@ public class Enemy : MonoBehaviour
         {
             if (hitInfo.collider.gameObject.tag == "Powerup")
             {
-                //Debug.Log("We detected a powerup!");
-                
-                //Transform powerupTransform = hitInfo.transform;
-                //Debug.Log($"We hit the {powerupTransform.name} Powerup");
                 Instantiate(_spiralProjectile, transform.position, transform.rotation);
                 StartCoroutine(JellyfishFireCooldownRoutine());
             }
         }
 
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector2.up) * 20f, Color.yellow);
+        //Debug.DrawRay(transform.position, transform.TransformDirection(Vector2.up) * 20f, Color.yellow);
     }
 
     IEnumerator JellyfishFireCooldownRoutine()
@@ -302,7 +247,6 @@ public class Enemy : MonoBehaviour
     {
         while (_isEnemyDead == false)
         {
-            //check the isRamming bool to assign thrust value
             if (_isRamming == true)
             {
                 _currentThrust = _rammingThrust;
@@ -334,7 +278,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    //firing routine for the blowfish
     IEnumerator BlowfishFireRoutine()
     {
         yield return new WaitForSeconds(_blowFishFireRate);
@@ -369,10 +312,8 @@ public class Enemy : MonoBehaviour
         {
             float _offset = -3f;
 
-            //fire at the player when behind it
             if (_target != null && this.transform.position.x < (_target.transform.position.x + _offset))
             {
-                //fire at the player
                 Instantiate(_starProjectile, transform.position, Quaternion.identity);
 
                 yield return new WaitForSeconds(5f);
@@ -415,7 +356,6 @@ public class Enemy : MonoBehaviour
 
     void JellyfishBoundaries()
     {
-        //screen-wrap enemy jellyfish boundaries
         if (transform.position.y > 6.5f)
         {
             transform.position = new Vector3(transform.position.x, -6.5f, 0);
@@ -434,10 +374,8 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    //method for checking enemy shields
     void EnemyShieldCheck()
     {
-        //check if shield is active
         if (_isEnemyShieldActive == true)
         {
             _isEnemyShieldActive = false;
@@ -455,56 +393,14 @@ public class Enemy : MonoBehaviour
 
     void EnemyOnDeathBehavior()
     {
-        //varibale for enemy ID
-        //0 = piranha, 1 = jellyfish, 2 = Red_Piranha, 3 = Blowfish
-
         Instantiate(_deadEnemy, transform.position, Quaternion.identity);
 
         Destroy(this.gameObject);
-
-        //if (_enemyID == 0)
-        //{
-        //    _isEnemyDead = true;
-        //    _enemyCollider.enabled = false;
-        //    _spriteRenderer.color = Color.blue;
-        //    _spriteRenderer.flipY = true;
-        //    _enemyRB.gravityScale = 1f;
-        //}
-
-        //else if (_enemyID == 1)
-        //{
-        //    _isEnemyDead = true;
-        //    Destroy(this.gameObject);
-        //}
-
-        //else if (_enemyID == 2)
-        //{
-        //    CircleCollider2D _parentCollider = this.GetComponentInParent<CircleCollider2D>();
-
-        //    Destroy(_parentCollider);
-
-        //    _isEnemyDead = true;
-        //    _enemyCollider.enabled = false;
-        //    _spriteRenderer.color = Color.blue;
-        //    _spriteRenderer.flipY = true;
-        //    _enemyRB.gravityScale = 1f;
-        //}
-
-        //else if (_enemyID == 3)
-        //{
-        //    _isEnemyDead = true;
-        //    _blowfishCollider.enabled = false;
-        //    _spriteRenderer.color = Color.blue;
-        //    _spriteRenderer.flipY = true;
-        //    _enemyRB.gravityScale = 1f;
-        //}
     }
 
     private void OnTriggerEnter2D(Collider2D other)
-    {
-        //Debug.Log("Enemy collided with " + other.transform.name + " at the location of " + other.transform.position);
-        
-        if (other.tag == "Player")
+    {  
+        if (other.CompareTag("Player"))
         {
             if (_player != null)
             {
@@ -514,15 +410,13 @@ public class Enemy : MonoBehaviour
             EnemyShieldCheck();
         }
 
-        else if (other.tag == "Tusk")
+        else if (other.CompareTag("Tusk"))
         {
             if (other != null)
             {
                 Destroy(other.gameObject);
             }
 
-            //communicate with UI Manager
-            //add 10 points to score
             if (_uiManager != null)
             {
                 _uiManager.UpdateScore(10);
@@ -531,17 +425,13 @@ public class Enemy : MonoBehaviour
             EnemyShieldCheck();
         }
 
-        else if (other.tag == "Bubble_Blaster")
+        else if (other.CompareTag("Bubble_Blaster"))
         {
             if (other != null)
             {
                 Destroy(other.gameObject);
             }
 
-            //debug message to see if tag is working
-            Debug.Log("the enemy hit the bubble blaster");
-
-            //add 10 points to the score
             if (_uiManager != null)
             {
                 _uiManager.UpdateScore(10);

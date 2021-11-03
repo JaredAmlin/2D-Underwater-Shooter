@@ -13,7 +13,6 @@ public class AnglerfishTarget : MonoBehaviour
     private bool _hasIncremented = false;
     private bool _maxIncrement = false;
 
-    //variable to hold my CameraShake class
     private CameraShake _cameraHolder;
 
     private HealthBar _anglerHealthBar;
@@ -25,10 +24,8 @@ public class AnglerfishTarget : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //find the camera holder and get the CameraShake class component
         _cameraHolder = GameObject.Find("Camera_Holder").GetComponent<CameraShake>();
 
-        //debug the GetComponent
         if (_cameraHolder == null)
         {
             Debug.LogError("The Camera Holder is NULL");
@@ -70,13 +67,10 @@ public class AnglerfishTarget : MonoBehaviour
 
         _anglerHealthBar.UpdateHealth(_currentHealth);
 
-        Debug.Log("The Anglerfish TARGET has been DAMAGED!");
-
         _uiManager.UpdateScore(50);
 
         if (_cameraHolder != null)
         {
-            //start coroutine on the camera shake script.
             StartCoroutine(_cameraHolder.ShakeTheCamera(0.3f, _cameraShakeMagnitude));
         }
 

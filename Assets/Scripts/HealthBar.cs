@@ -31,11 +31,7 @@ public class HealthBar : MonoBehaviour
 
     public void UpdateHealth(int currentHealth)
     {
-        Debug.Log("The current health of the Anglerfish is " + currentHealth);
-
         float currentFillAmount = ((float) currentHealth) /(float) (_maxHealth);
-
-        Debug.Log("The current FILL amount is " + currentFillAmount);
 
         _healthBarScale.x = currentFillAmount;
 

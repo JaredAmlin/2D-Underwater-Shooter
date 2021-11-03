@@ -14,7 +14,6 @@ public class Powerup : MonoBehaviour
 
     [SerializeField] private AudioClip _powerupSoundClip;
 
-    //ID for Powerups
     //0 = Triple Tusk, 1 = Flipper Boost, 2 = Bubble Shield, 3 = Health, 4 = Tusk Ammo Reload , 5 = Player Penalty, 6 = Bubble Blaster, 7 = Homing Tusk
     [SerializeField] private int _powerupID;
 
@@ -22,6 +21,7 @@ public class Powerup : MonoBehaviour
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
+
         if (_player == null)
         {
             Debug.Log("The Player is NULL");
@@ -43,8 +43,6 @@ public class Powerup : MonoBehaviour
 
         if (_player != null && _isPlayerPullingPowerups == true)
         {
-            //Debug.Log(_isPlayerPullingPowerups);
-
             transform.position = Vector2.MoveTowards(this.transform.position, _player.transform.position, _playerPullSpeed * Time.deltaTime);
         }
 
@@ -83,24 +81,19 @@ public class Powerup : MonoBehaviour
                     case 2:
                         _player.ShieldActive();
                         break;
-                    case 3: //new case to hold my health collectible powerup
-                        _player.Heal(); //need to make a healing method on my player script
+                    case 3: 
+                        _player.Heal(); 
                         break;
-                    case 4: //new case to hold ammo reload powerup
-                        //call payer to reload ammo. make reload method in player class. 
+                    case 4:  
                         _player.PlayerReload();
                         break;
-                    case 5: //new case for Player Penalty Powerup
-                        //call player to start Player Panalty coroutine
-                        Debug.Log("The Player Penalty Powerup collided with the Player");
+                    case 5:
                         _player.PlayerPenaltyActive();
                         break;
-                    case 6: //new case for Bubble Blaster Powerup
-                        //call player to start Bubble Blaster method
-                        Debug.Log("The Bubble Blaster Powerup collided with the Player");
+                    case 6: 
                         _player.BubbleBlasterActive();
                         break;
-                    case 7: //new case for homing tusk powerup
+                    case 7:
                         _player.HomingTuskActive();
                         break;
                     default:

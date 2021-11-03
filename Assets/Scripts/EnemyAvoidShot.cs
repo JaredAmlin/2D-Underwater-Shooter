@@ -9,12 +9,6 @@ public class EnemyAvoidShot : MonoBehaviour
     [SerializeField] private float _bottomRespawnRange = -5.1f;
     [SerializeField] private float _topRespawnRange = 5.1f;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -30,13 +24,11 @@ public class EnemyAvoidShot : MonoBehaviour
 
     void MoveUp()
     {
-        //move the enemy up
         transform.Translate(Vector3.up * _speed * Time.deltaTime);
     }
 
     void MoveDown()
     {
-        //move the enemy down
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
     }
 
@@ -54,8 +46,6 @@ public class EnemyAvoidShot : MonoBehaviour
     {
         if (other.tag == "Tusk")
         {
-            //Debug.Log("That was a close one!!!");
-
             if (other.transform.position.y > this.transform.position.y)
             {
                 MoveDown();

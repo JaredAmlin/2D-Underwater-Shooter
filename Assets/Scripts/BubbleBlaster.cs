@@ -13,8 +13,6 @@ public class BubbleBlaster : MonoBehaviour
 
     private Rigidbody2D _bubbleRB;
 
-    
-
     // Start is called before the first frame update
     void Start()
     {
@@ -44,45 +42,32 @@ public class BubbleBlaster : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Enemy")
+        if (other.CompareTag("AnglerLight"))
         {
-            Debug.Log("The Bubble collider hit the enemy");
-        }
-
-        else if (other.tag == "AnglerLight")
-        {
-            Debug.Log("The TUSK hit the Anglerfish LIGHT");
-
             AnglerfishLight anglerLight = other.transform.GetComponent<AnglerfishLight>();
 
             if (anglerLight != null)
             {
-                //call damage method on light
                 anglerLight.AnglerfishLightDamage();
             }
 
             Destroy(this.gameObject);
         }
 
-        else if (other.tag == "AnglerTarget")
+        else if (other.CompareTag("AnglerTarget"))
         {
-            Debug.Log("The TUSK hit the Anglerfish TARGET");
-
             AnglerfishTarget anglerTarget = other.transform.GetComponent<AnglerfishTarget>();
 
             if (anglerTarget != null)
             {
-                //call damage method on anglerFish
                 anglerTarget.AnglerfishTargetDamage(2);
             }
-            //send message to damage the Anglerfish
+        
             Destroy(this.gameObject);
         }
 
-        else if (other.tag == "AnglerFish")
+        else if (other.CompareTag("AnglerFish"))
         {
-            Debug.Log("The TUSK hit the Anglerfish BODY or JAW");
-            //play some dull thud sound
             Destroy(this.gameObject);
         }
     }

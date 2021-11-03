@@ -12,6 +12,8 @@ public class AnglerfishLight : MonoBehaviour
 
     [SerializeField] private float _lanternFireRate = 2f;
 
+    private WaitForSeconds _waitForSecondsFireRate;
+
     private SpriteRenderer _anglerSpriteRenderer;
 
     [SerializeField] private Color _fullLightColor;
@@ -86,18 +88,17 @@ public class AnglerfishLight : MonoBehaviour
         _lanternCollider.enabled = false;
 
         _anglerSpriteRenderer.color = _invisibleAlpha;
+
+        _waitForSecondsFireRate = new WaitForSeconds(_lanternFireRate);
     }
 
     public void AnglerfishLightDamage()
     {
         _lightHealth--;
 
-        //clamp the value of the light health
         int lightHealthClamp = Mathf.Clamp(_lightHealth, 0, 3);
 
         _lightHealth = lightHealthClamp;
-
-        Debug.Log("The Anglerfish LIGHT has been DAMAGED!");
 
         _uIManager.UpdateScore(20);
 
@@ -127,7 +128,6 @@ public class AnglerfishLight : MonoBehaviour
     {
         _anglerfish.SpeedDown();
 
-        //call the animation trigger on the angler Jaw
         if (_anglerJawAnim != null)
         {
             _anglerJawAnim.SetTrigger("JawOpen");
@@ -138,7 +138,6 @@ public class AnglerfishLight : MonoBehaviour
             _anglerWeakSpot.SetActive(true);
         }
 
-        //time for player to damage the boss!
         yield return new WaitForSeconds(_jawOpenWaitTime);
 
         if (_anglerJawAnim != null)
@@ -184,7 +183,7 @@ public class AnglerfishLight : MonoBehaviour
                 Instantiate(_lanternShot, transform.position, Quaternion.identity);
             }
 
-            yield return new WaitForSeconds(_lanternFireRate);
+            yield return _waitForSecondsFireRate;
         }
     }
 
